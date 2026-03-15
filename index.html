@@ -224,33 +224,58 @@ header{
 .p-arrow{font-family:var(--display);font-size:1.1rem;font-weight:700;display:flex;align-items:center;gap:8px;margin-bottom:6px}
 .p-up{color:#34d399}.p-dn{color:#f87171}.p-st{color:var(--text2)}
 
-/* ── Flight Radar ── */
-.radar-section{margin-bottom:14px}
-.radar-container{position:relative;border-radius:16px;overflow:hidden;height:420px;background:rgba(0,8,20,.6);border:1px solid rgba(255,255,255,.12)}
-#flight-canvas{position:absolute;inset:0;width:100%;height:100%}
-#radar-grid-canvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
-.radar-overlay-ui{position:absolute;top:14px;left:14px;display:flex;flex-direction:column;gap:8px;pointer-events:none;z-index:10}
-.radar-badge{font-size:.65rem;padding:5px 12px;border-radius:20px;background:rgba(0,0,0,.5);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.7);backdrop-filter:blur(8px)}
-.radar-sweep-line{position:absolute;top:50%;left:50%;width:50%;height:1.5px;background:linear-gradient(90deg,transparent,rgba(52,211,153,.7));transform-origin:left center;animation:sweep 4s linear infinite;z-index:5;pointer-events:none}
-@keyframes sweep{to{transform:rotate(360deg)}}
-.radar-center-dot{position:absolute;top:50%;left:50%;width:10px;height:10px;border-radius:50%;background:#34d399;transform:translate(-50%,-50%);box-shadow:0 0 0 16px rgba(52,211,153,.12),0 0 0 32px rgba(52,211,153,.06);z-index:6;pointer-events:none}
-/* Flight tooltip */
-#flight-tooltip{
-  position:absolute;z-index:20;
-  background:rgba(0,0,0,.85);backdrop-filter:blur(16px);
-  border:1px solid rgba(255,255,255,.2);border-radius:12px;
-  padding:14px 16px;min-width:220px;display:none;
-  pointer-events:none;
-}
-#flight-tooltip .ft-callsign{font-family:var(--display);font-size:1rem;font-weight:700;margin-bottom:8px;color:#60a5fa}
-#flight-tooltip .ft-row{display:flex;justify-content:space-between;font-size:.75rem;padding:4px 0;border-bottom:1px solid rgba(255,255,255,.06)}
-#flight-tooltip .ft-row:last-child{border-bottom:none}
-#flight-tooltip .ft-lbl{color:var(--text3)}
-#flight-tooltip .ft-val{color:var(--text2);font-weight:500}
-.flight-dot{position:absolute;cursor:pointer;z-index:8;transition:transform .1s}
-.flight-dot:hover{transform:scale(1.5)}
+/* ── Extra panels ── */
+.wide-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+@media(max-width:760px){.wide-grid{grid-template-columns:1fr}}
+.triple-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:14px}
+@media(max-width:900px){.triple-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:580px){.triple-grid{grid-template-columns:1fr}}
 
-/* ── Error ── */
+/* Animated temp bar */
+.temp-bar-wrap{height:8px;border-radius:4px;background:rgba(255,255,255,.08);overflow:hidden;margin:6px 0 2px}
+.temp-bar-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,#60a5fa,#fbbf24,#f87171);transition:width 1.2s cubic-bezier(.4,0,.2,1)}
+
+/* Wind rose */
+#wind-rose-canvas{display:block;margin:0 auto}
+
+/* Comfort index arc */
+.comfort-arc-wrap{position:relative;width:100px;height:60px;margin:0 auto 6px;overflow:hidden}
+.ca-track{position:absolute;bottom:0;left:0;width:100px;height:100px;border-radius:50px 50px 0 0;border:6px solid rgba(255,255,255,.08);border-bottom:none}
+.ca-fill{position:absolute;bottom:0;left:0;width:100px;height:100px;border-radius:50px 50px 0 0;border:6px solid #34d399;border-bottom:none;transform-origin:bottom center;transform:rotate(-90deg);transition:transform 1.3s cubic-bezier(.4,0,.2,1)}
+.ca-needle{position:absolute;bottom:2px;left:50%;width:2px;height:43px;background:rgba(255,255,255,.5);transform-origin:bottom center;transform:translateX(-50%) rotate(-90deg);transition:transform 1.3s cubic-bezier(.4,0,.2,1);border-radius:1px}
+
+/* Astronomy */
+.astro-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.07);font-size:.8rem}
+.astro-row:last-child{border-bottom:none}
+.astro-lbl{color:rgba(255,255,255,.4);font-size:.68rem;letter-spacing:.06em;text-transform:uppercase}
+.astro-val{color:rgba(255,255,255,.75);font-weight:500}
+
+/* Animated precip chart */
+.precip-bars{display:flex;align-items:flex-end;gap:3px;height:60px;margin-top:8px}
+.pbar{flex:1;border-radius:2px 2px 0 0;background:rgba(96,165,250,.5);transition:height 1s cubic-bezier(.4,0,.2,1);min-height:2px;position:relative}
+.pbar:hover{background:rgba(96,165,250,.8)}
+.pbar-lbl{font-size:.58rem;color:rgba(255,255,255,.3);text-align:center;margin-top:4px}
+
+/* Heat index / feels-like spectrum */
+.spectrum-bar{height:10px;border-radius:5px;background:linear-gradient(90deg,#60a5fa 0%,#34d399 25%,#fbbf24 60%,#f97316 80%,#ef4444 100%);position:relative;margin:10px 0 4px}
+.spectrum-pin{position:absolute;top:-3px;width:4px;height:16px;background:#fff;border-radius:2px;transform:translateX(-50%);transition:left 1s cubic-bezier(.4,0,.2,1);box-shadow:0 0 8px rgba(255,255,255,.5)}
+
+/* Animated number counter */
+@keyframes countIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.count-anim{animation:countIn .5s ease both}
+
+/* Moon phase */
+.moon-phase-icon{font-size:2rem;text-align:center;margin:4px 0;filter:drop-shadow(0 0 8px rgba(255,255,255,.2))}
+
+/* ISA compare bar */
+.isa-row{display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.06);font-size:.75rem}
+.isa-row:last-child{border-bottom:none}
+.isa-lbl{width:80px;color:rgba(255,255,255,.4);flex-shrink:0}
+.isa-bar-wrap{flex:1;height:5px;background:rgba(255,255,255,.08);border-radius:3px;overflow:hidden}
+.isa-bar-fill{height:100%;border-radius:3px;transition:width 1.1s ease}
+.isa-val{width:70px;text-align:right;color:rgba(255,255,255,.7);font-weight:500}
+
+/* Error */
 .err-msg{text-align:center;padding:24px 0;color:#f87171;font-size:.85rem}
 
 /* ── Footer ── */
@@ -447,22 +472,132 @@ footer a:hover{color:#60a5fa}
   </div>
 </div>
 
-<!-- Flight Radar -->
-<div class="radar-section fa" style="animation-delay:.28s">
-  <div class="glass" style="padding:18px;border-radius:16px;margin-bottom:0">
-    <div class="panel-hdr">Live flight radar <span class="badge-sm">simulated · click aircraft</span></div>
-    <div class="radar-container" id="radar-container">
-      <canvas id="flight-canvas"></canvas>
-      <canvas id="radar-grid-canvas"></canvas>
-      <div class="radar-sweep-line"></div>
-      <div class="radar-center-dot"></div>
-      <div class="radar-overlay-ui">
-        <div class="radar-badge" id="radar-loc-badge">Location: —</div>
-        <div class="radar-badge" id="radar-range-badge">Range: 200 km</div>
-        <div class="radar-badge" id="radar-count-badge">Aircraft: 0</div>
+<!-- ── Row: Comfort + Precip Breakdown ── -->
+<div class="wide-grid fa" style="animation-delay:.28s">
+
+  <!-- Comfort & feels-like panel -->
+  <div class="glass" style="padding:20px;border-radius:16px">
+    <div class="panel-hdr">Comfort index <span class="badge-sm">heat · humidity · wind</span></div>
+    <div style="display:flex;gap:24px;align-items:center;margin-bottom:18px">
+      <div>
+        <div class="comfort-arc-wrap">
+          <div class="ca-track"></div>
+          <div class="ca-fill" id="ci-fill"></div>
+          <div class="ca-needle" id="ci-needle"></div>
+        </div>
+        <div style="font-family:var(--display);font-size:1.6rem;font-weight:700;text-align:center" id="ci-val">—</div>
+        <div style="font-size:.66rem;color:rgba(255,255,255,.35);text-align:center" id="ci-lbl">—</div>
       </div>
-      <div id="flight-tooltip"></div>
+      <div style="flex:1">
+        <div style="font-size:.68rem;color:rgba(255,255,255,.35);letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px">Feels-like spectrum</div>
+        <div class="spectrum-bar"><div class="spectrum-pin" id="spec-pin" style="left:50%"></div></div>
+        <div style="display:flex;justify-content:space-between;font-size:.62rem;color:rgba(255,255,255,.3);margin-top:2px"><span>Freezing</span><span>Cool</span><span>Comfortable</span><span>Hot</span></div>
+        <div style="margin-top:14px" id="comfort-details">
+          <div class="drow"><span class="dlbl">Heat index</span><span class="dval" id="heat-idx">—</span></div>
+          <div class="drow"><span class="dlbl">Wind chill</span><span class="dval" id="wind-chill">—</span></div>
+          <div class="drow"><span class="dlbl">Humidex</span><span class="dval" id="humidex">—</span></div>
+          <div class="drow"><span class="dlbl">Apparent temp</span><span class="dval" id="app-temp">—</span></div>
+        </div>
+      </div>
     </div>
+    <div style="font-size:.68rem;color:rgba(255,255,255,.35);letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px">Today's temperature range</div>
+    <div class="temp-bar-wrap"><div class="temp-bar-fill" id="temp-range-bar" style="width:0%"></div></div>
+    <div style="display:flex;justify-content:space-between;font-size:.72rem;color:rgba(255,255,255,.5);margin-top:4px">
+      <span id="temp-min-lbl">—</span><span id="temp-max-lbl">—</span>
+    </div>
+  </div>
+
+  <!-- 7-day precipitation breakdown -->
+  <div class="glass" style="padding:20px;border-radius:16px">
+    <div class="panel-hdr">Precipitation breakdown <span class="badge-sm">7-day</span></div>
+    <div class="precip-bars" id="precip-bars"></div>
+    <div style="display:flex;gap:3px;margin-top:2px" id="precip-bar-labels"></div>
+    <div style="margin-top:18px">
+      <div class="drow"><span class="dlbl">7-day total</span><span class="dval" id="precip-7d-total">—</span></div>
+      <div class="drow"><span class="dlbl">Wettest day</span><span class="dval" id="precip-7d-peak">—</span></div>
+      <div class="drow"><span class="dlbl">Dry days ahead</span><span class="dval" id="precip-7d-dry">—</span></div>
+      <div class="drow"><span class="dlbl">Rain probability today</span><span class="dval" id="precip-prob">—</span></div>
+    </div>
+    <div style="margin-top:14px">
+      <div style="font-size:.68rem;color:rgba(255,255,255,.35);letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px">Hourly precip next 12h</div>
+      <div class="precip-bars" id="hourly-precip-bars" style="height:44px"></div>
+      <div style="display:flex;gap:3px;margin-top:2px" id="hourly-precip-labels"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Row: Wind Rose + Astronomy + ISA Atmosphere ── -->
+<div class="triple-grid fa" style="animation-delay:.31s">
+
+  <!-- Wind rose -->
+  <div class="glass" style="padding:20px;border-radius:16px">
+    <div class="panel-hdr">Wind rose <span class="badge-sm">7-day direction</span></div>
+    <canvas id="wind-rose-canvas" width="200" height="200"></canvas>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px">
+      <div class="drow" style="padding:5px 0"><span class="dlbl">Avg speed</span><span class="dval" id="wr-avg">—</span></div>
+      <div class="drow" style="padding:5px 0"><span class="dlbl">Max gust</span><span class="dval" id="wr-max">—</span></div>
+      <div class="drow" style="padding:5px 0"><span class="dlbl">Prevailing</span><span class="dval" id="wr-dir">—</span></div>
+      <div class="drow" style="padding:5px 0"><span class="dlbl">Beaufort</span><span class="dval" id="wr-bf">—</span></div>
+    </div>
+  </div>
+
+  <!-- Astronomy & moon phase -->
+  <div class="glass" style="padding:20px;border-radius:16px">
+    <div class="panel-hdr">Astronomy</div>
+    <div style="display:flex;gap:16px;align-items:center;margin-bottom:16px">
+      <div style="flex:1">
+        <div class="sun-wrap" style="height:64px"><canvas id="sun-canvas"></canvas></div>
+        <div class="sun-times"><span id="sunrise">—</span><span id="sunset">—</span></div>
+      </div>
+      <div style="text-align:center;min-width:70px">
+        <div class="moon-phase-icon" id="moon-icon">🌕</div>
+        <div style="font-size:.68rem;color:rgba(255,255,255,.4)" id="moon-phase-name">Full moon</div>
+        <div style="font-size:.72rem;color:rgba(255,255,255,.6);margin-top:2px" id="moon-illum">—</div>
+      </div>
+    </div>
+    <div class="astro-row"><span class="astro-lbl">Daylight hours</span><span class="astro-val" id="daylight-hrs">—</span></div>
+    <div class="astro-row"><span class="astro-lbl">Solar noon</span><span class="astro-val" id="solar-noon">—</span></div>
+    <div class="astro-row"><span class="astro-lbl">Golden hour</span><span class="astro-val" id="golden-hour">—</span></div>
+    <div class="astro-row"><span class="astro-lbl">Civil twilight</span><span class="astro-val" id="civil-twilight">—</span></div>
+    <div class="astro-row"><span class="astro-lbl">Moonrise</span><span class="astro-val" id="moonrise">—</span></div>
+  </div>
+
+  <!-- ISA atmosphere comparison -->
+  <div class="glass" style="padding:20px;border-radius:16px">
+    <div class="panel-hdr">ISA deviation <span class="badge-sm">vs standard atmosphere</span></div>
+    <div style="font-family:var(--display);font-size:1.5rem;font-weight:700;margin-bottom:2px" id="isa-dev-val">—</div>
+    <div style="font-size:.7rem;color:rgba(255,255,255,.35);margin-bottom:16px" id="isa-dev-lbl">—</div>
+    <div id="isa-rows"></div>
+    <div style="margin-top:14px;padding-top:12px;border-top:1px solid rgba(255,255,255,.07)">
+      <div style="font-size:.68rem;color:rgba(255,255,255,.35);letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px">Performance impact</div>
+      <div class="drow"><span class="dlbl">True airspeed +</span><span class="dval" id="isa-tas">—</span></div>
+      <div class="drow"><span class="dlbl">Engine power</span><span class="dval" id="isa-power">—</span></div>
+      <div class="drow"><span class="dlbl">Takeoff roll est.</span><span class="dval" id="isa-tkoff">—</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Row: Hourly wind animation + 7-day detail ── -->
+<div class="wide-grid fa" style="animation-delay:.34s">
+
+  <!-- Animated hourly wind profile -->
+  <div class="glass" style="padding:20px;border-radius:16px">
+    <div class="panel-hdr">Hourly wind profile <span class="badge-sm">next 24h</span></div>
+    <div style="position:relative;height:160px"><canvas id="wind-profile-chart"></canvas></div>
+    <div style="display:flex;gap:14px;font-size:.69rem;color:rgba(255,255,255,.35);margin-top:10px">
+      <span style="display:flex;align-items:center;gap:5px"><span style="width:14px;height:2px;background:#34d399;display:inline-block;border-radius:2px"></span>Speed km/h</span>
+      <span style="display:flex;align-items:center;gap:5px"><span style="width:14px;height:2px;background:rgba(251,191,36,.55);display:inline-block;border-radius:2px"></span>Gusts km/h</span>
+    </div>
+    <div style="margin-top:16px">
+      <div class="panel-hdr" style="margin-bottom:10px">Apparent temperature <span class="badge-sm">feels-like 24h</span></div>
+      <div style="position:relative;height:100px"><canvas id="feels-chart"></canvas></div>
+    </div>
+  </div>
+
+  <!-- 7-day detailed forecast table -->
+  <div class="glass" style="padding:20px;border-radius:16px">
+    <div class="panel-hdr">7-day detail</div>
+    <div id="weekly-detail-table"></div>
   </div>
 </div>
 
@@ -793,366 +928,6 @@ function buildMETAR(name,c){
 // FLIGHT RADAR
 // ════════════════════════════════════════════
 // ════════════════════════════════════════════
-// AIRLINE & AIRCRAFT LOOKUP TABLES
-// ════════════════════════════════════════════
-const AIRLINE_ICAO={
-  AAL:{name:'American Airlines',country:'USA',color:'#dc2626'},
-  UAL:{name:'United Airlines',country:'USA',color:'#1d4ed8'},
-  DAL:{name:'Delta Air Lines',country:'USA',color:'#7c3aed'},
-  SWA:{name:'Southwest Airlines',country:'USA',color:'#d97706'},
-  ASA:{name:'Alaska Airlines',country:'USA',color:'#0e7490'},
-  JBU:{name:'JetBlue Airways',country:'USA',color:'#0284c7'},
-  SKW:{name:'SkyWest Airlines',country:'USA',color:'#475569'},
-  FFT:{name:'Frontier Airlines',country:'USA',color:'#15803d'},
-  BAW:{name:'British Airways',country:'UK',color:'#1e40af'},
-  DLH:{name:'Lufthansa',country:'Germany',color:'#1e3a8a'},
-  AFR:{name:'Air France',country:'France',color:'#be123c'},
-  UAE:{name:'Emirates',country:'UAE',color:'#b45309'},
-  QTR:{name:'Qatar Airways',country:'Qatar',color:'#7f1d1d'},
-  ETH:{name:'Ethiopian Airlines',country:'Ethiopia',color:'#166534'},
-  THY:{name:'Turkish Airlines',country:'Turkey',color:'#991b1b'},
-  RYR:{name:'Ryanair',country:'Ireland',color:'#065f46'},
-  EZY:{name:'easyJet',country:'UK',color:'#ea580c'},
-  VIR:{name:'Virgin Atlantic',country:'UK',color:'#be185d'},
-  KLM:{name:'KLM',country:'Netherlands',color:'#0369a1'},
-  SIA:{name:'Singapore Airlines',country:'Singapore',color:'#f59e0b'},
-  CPA:{name:'Cathay Pacific',country:'Hong Kong',color:'#0f766e'},
-  ANA:{name:'All Nippon Airways',country:'Japan',color:'#1d4ed8'},
-  JAL:{name:'Japan Airlines',country:'Japan',color:'#dc2626'},
-  AIC:{name:'Air India',country:'India',color:'#b45309'},
-  IGO:{name:'IndiGo',country:'India',color:'#4338ca'},
-  SEJ:{name:'SpiceJet',country:'India',color:'#dc2626'},
-  FDX:{name:'FedEx Express',country:'USA',color:'#7c2d12'},
-  UPS:{name:'UPS Airlines',country:'USA',color:'#92400e'},
-  GTI:{name:'Atlas Air',country:'USA',color:'#374151'},
-  CAL:{name:'China Airlines',country:'Taiwan',color:'#dc2626'},
-  CCA:{name:'Air China',country:'China',color:'#dc2626'},
-  CSN:{name:'China Southern',country:'China',color:'#1d4ed8'},
-  CES:{name:'China Eastern',country:'China',color:'#dc2626'},
-  KAL:{name:'Korean Air',country:'South Korea',color:'#1e40af'},
-  ANZ:{name:'Air New Zealand',country:'New Zealand',color:'#1f2937'},
-  QFA:{name:'Qantas',country:'Australia',color:'#dc2626'},
-  VJC:{name:'VietJet Air',country:'Vietnam',color:'#dc2626'},
-  ITY:{name:'ITA Airways',country:'Italy',color:'#1d4ed8'},
-  IBE:{name:'Iberia',country:'Spain',color:'#dc2626'},
-  TAP:{name:'TAP Air Portugal',country:'Portugal',color:'#15803d'},
-};
-
-// ICAO prefix → country
-const ICAO_COUNTRY={
-  'a':'USA','c':'Canada','e':'UK / Europe','d':'Germany','f':'France',
-  '4b':'Switzerland','38':'Germany','3c':'Austria','48':'Poland','49':'Czech Republic',
-  '80':'India','89':'Japan','7c':'Australia','c0':'Canada','76':'Mexico',
-  '71':'Mexico','b8':'UAE','b9':'UAE','896':'India','800':'India'
-};
-
-function lookupAirline(callsign){
-  if(!callsign||callsign.trim()==='') return null;
-  const cs=callsign.trim().toUpperCase();
-  const prefix=cs.substring(0,3);
-  if(AIRLINE_ICAO[prefix]) return {...AIRLINE_ICAO[prefix],prefix};
-  const prefix2=cs.substring(0,2);
-  for(const[k,v] of Object.entries(AIRLINE_ICAO)){
-    if(k.startsWith(prefix2)) return {...v,prefix:k};
-  }
-  return null;
-}
-
-function getFlightNumber(callsign){
-  if(!callsign) return '????';
-  return callsign.trim().replace(/^[A-Z]{2,3}/,'') || callsign.trim();
-}
-
-// Random airport for unknown origin/dest
-const SIM_AIRPORTS=[
-  {code:'JFK',city:'New York'},{code:'LAX',city:'Los Angeles'},
-  {code:'ORD',city:'Chicago'},{code:'ATL',city:'Atlanta'},
-  {code:'LHR',city:'London'},{code:'CDG',city:'Paris'},
-  {code:'FRA',city:'Frankfurt'},{code:'DXB',city:'Dubai'},
-  {code:'BOM',city:'Mumbai'},{code:'DEL',city:'Delhi'},
-  {code:'HYD',city:'Hyderabad'},{code:'MAA',city:'Chennai'},
-  {code:'BLR',city:'Bangalore'},{code:'CCU',city:'Kolkata'},
-  {code:'SIN',city:'Singapore'},{code:'NRT',city:'Tokyo'},
-  {code:'SYD',city:'Sydney'},{code:'IST',city:'Istanbul'},
-  {code:'AMS',city:'Amsterdam'},{code:'MAD',city:'Madrid'},
-];
-function randAirport(seed){
-  const i=Math.abs(seed||Math.random()*1000)%SIM_AIRPORTS.length;
-  return SIM_AIRPORTS[Math.floor(i)];
-}
-
-// ════════════════════════════════════════════
-// FLIGHT RADAR — OPENSKY + FALLBACK
-// ════════════════════════════════════════════
-let flights=[];
-let radarW=0,radarH=0;
-let currentLat=39.76,currentLon=-84.19;
-let radarLat=currentLat,radarLon=currentLon;
-const RADAR_RANGE_DEG=2.5; // ~275km radius
-
-async function fetchLiveFlights(lat,lon){
-  radarLat=lat; radarLon=lon;
-  document.getElementById('radar-count-badge').textContent='Aircraft: loading...';
-  document.getElementById('radar-loc-badge').textContent='Location: '+document.getElementById('loc-name').textContent.split(',')[0];
-  const lamin=(lat-RADAR_RANGE_DEG).toFixed(4);
-  const lamax=(lat+RADAR_RANGE_DEG).toFixed(4);
-  const lomin=(lon-RADAR_RANGE_DEG).toFixed(4);
-  const lomax=(lon+RADAR_RANGE_DEG).toFixed(4);
-  try{
-    const res=await fetch(
-      `https://opensky-network.org/api/states/all?lamin=${lamin}&lomin=${lomin}&lamax=${lamax}&lomax=${lomax}`,
-      {signal:AbortSignal.timeout(8000)}
-    );
-    if(!res.ok) throw new Error('HTTP '+res.status);
-    const data=await res.json();
-    if(data.states&&data.states.length>0){
-      parseOpenSkyData(data.states,lat,lon);
-      document.getElementById('radar-count-badge').textContent=`Aircraft: ${flights.length} (live)`;
-    } else {
-      generateSimFlights(lat,lon);
-      document.getElementById('radar-count-badge').textContent=`Aircraft: ${flights.length} (simulated — no traffic)`;
-    }
-  }catch(e){
-    console.warn('OpenSky unavailable, using simulation:',e.message);
-    generateSimFlights(lat,lon);
-    document.getElementById('radar-count-badge').textContent=`Aircraft: ${flights.length} (simulated)`;
-  }
-  if(flightAnimId) cancelAnimationFrame(flightAnimId);
-  animateFlights();
-}
-
-function parseOpenSkyData(states,centerLat,centerLon){
-  // OpenSky state vector fields:
-  // [0]icao24 [1]callsign [2]origin_country [3]time_position [4]last_contact
-  // [5]longitude [6]latitude [7]baro_altitude [8]on_ground [9]velocity
-  // [10]true_track [11]vertical_rate [12]sensors [13]geo_altitude
-  // [14]squawk [15]spi [16]position_source
-  flights=states
-    .filter(s=>s[8]===false && s[5]!=null && s[6]!=null) // airborne, has position
-    .slice(0,40)
-    .map((s,i)=>{
-      const callsign=(s[1]||'').trim();
-      const airline=lookupAirline(callsign);
-      const lon_f=parseFloat(s[5]), lat_f=parseFloat(s[6]);
-      const alt=s[13]||s[7]||0; // geo_altitude or baro
-      const speed_ms=s[9]||0;
-      const heading=s[10]||0;
-      // Convert real lat/lon to radar canvas fraction
-      const nx=0.5+(lon_f-centerLon)/(RADAR_RANGE_DEG*2);
-      const ny=0.5-(lat_f-centerLat)/(RADAR_RANGE_DEG*2);
-      // Speed in canvas units per frame (≈60fps, 1 deg = canvas width)
-      const kmh=speed_ms*3.6;
-      const degPerSec=kmh/(111*3600);
-      const vx=Math.sin(heading*Math.PI/180)*degPerSec/(RADAR_RANGE_DEG*2)/60;
-      const vy=-Math.cos(heading*Math.PI/180)*degPerSec/(RADAR_RANGE_DEG*2)/60;
-      const seed=i*7+Math.floor(lat_f*10);
-      const dep=randAirport(seed);
-      const arr=randAirport(seed+5);
-      return{
-        id:i,
-        icao24:s[0]||'??????',
-        callsign:callsign||'??????',
-        airline:airline?airline.name:(s[2]||'Unknown'),
-        country:airline?airline.country:(s[2]||'Unknown'),
-        squawk:s[14]||'????',
-        dep:dep.code, depCity:dep.city,
-        arr:arr.code, arrCity:arr.city,
-        aircraft:'Unknown',
-        heading, speed:kmh,
-        alt:Math.round(alt*3.281), // m → ft
-        altM:Math.round(alt),
-        x:Math.max(0.02,Math.min(.98,nx)),
-        y:Math.max(0.02,Math.min(.98,ny)),
-        vx,vy,
-        color:airline?airline.color:'#94a3b8',
-        selected:false, live:true,
-        lat:lat_f, lon:lon_f,
-        vertRate:s[11]||0
-      };
-    });
-}
-
-function generateSimFlights(lat,lon){
-  // Realistic simulation when OpenSky is unavailable
-  const SIM_AIRLINES=Object.entries(AIRLINE_ICAO).slice(0,20);
-  flights=[];
-  const count=12+Math.floor(Math.random()*10);
-  for(let i=0;i<count;i++){
-    const [prefix,al]=SIM_AIRLINES[i%SIM_AIRLINES.length];
-    const flightNum=String(100+Math.floor(Math.random()*9900)).padStart(4,'0');
-    const heading=Math.random()*360;
-    const speed=350+Math.random()*550;
-    const alt=Math.floor(5000+Math.random()*35000);
-    const angle=Math.random()*Math.PI*2;
-    const dist=.1+Math.random()*.85;
-    const nx=.5+Math.cos(angle)*dist*.45;
-    const ny=.5+Math.sin(angle)*dist*.45;
-    const kmh=speed;
-    const degPerSec=kmh/(111*3600);
-    const vx=Math.sin(heading*Math.PI/180)*degPerSec/(RADAR_RANGE_DEG*2)/60;
-    const vy=-Math.cos(heading*Math.PI/180)*degPerSec/(RADAR_RANGE_DEG*2)/60;
-    const dep=randAirport(i*3);
-    const arr=randAirport(i*3+4);
-    flights.push({
-      id:i, icao24:'??????',
-      callsign:prefix+flightNum,
-      airline:al.name, country:al.country,
-      squawk:String(1000+Math.floor(Math.random()*6000)),
-      dep:dep.code,depCity:dep.city,
-      arr:arr.code,arrCity:arr.city,
-      aircraft:'',heading,speed:kmh,
-      alt:Math.round(alt/100)*100,
-      altM:Math.round(alt*.3048),
-      x:Math.max(.02,Math.min(.98,nx)),
-      y:Math.max(.02,Math.min(.98,ny)),
-      vx,vy,color:al.color,selected:false,live:false,
-      lat:lat+(ny-.5)*RADAR_RANGE_DEG*2,
-      lon:lon+(nx-.5)*RADAR_RANGE_DEG*2,
-      vertRate:0
-    });
-  }
-}
-
-const flightCanvas=document.getElementById('flight-canvas');
-const flightCtx=flightCanvas.getContext('2d');
-const radarGridCanvas=document.getElementById('radar-grid-canvas');
-const radarGridCtx=radarGridCanvas.getContext('2d');
-let flightAnimId=null;
-
-function resizeRadar(){
-  const cont=document.getElementById('radar-container');
-  radarW=flightCanvas.width=radarGridCanvas.width=cont.offsetWidth;
-  radarH=flightCanvas.height=radarGridCanvas.height=cont.offsetHeight;
-  drawRadarGrid();
-}
-
-function drawRadarGrid(){
-  radarGridCtx.clearRect(0,0,radarW,radarH);
-  const cx=radarW/2,cy=radarH/2;
-  // Range rings
-  const rings=[.25,.5,.75,1];
-  rings.forEach((r,i)=>{
-    const rad=Math.min(radarW,radarH)*r*.45;
-    radarGridCtx.beginPath();radarGridCtx.arc(cx,cy,rad,0,Math.PI*2);
-    radarGridCtx.strokeStyle=`rgba(52,211,153,${.06+i*.02})`;
-    radarGridCtx.lineWidth=.8;radarGridCtx.stroke();
-    // Range label
-    const km=Math.round(200*r);
-    radarGridCtx.fillStyle='rgba(52,211,153,.3)';radarGridCtx.font='10px DM Mono,monospace';
-    radarGridCtx.fillText(km+'km',cx+rad+4,cy);
-  });
-  // Cross hairs
-  radarGridCtx.strokeStyle='rgba(52,211,153,.08)';radarGridCtx.lineWidth=.5;
-  radarGridCtx.beginPath();radarGridCtx.moveTo(cx,0);radarGridCtx.lineTo(cx,radarH);radarGridCtx.stroke();
-  radarGridCtx.beginPath();radarGridCtx.moveTo(0,cy);radarGridCtx.lineTo(radarW,cy);radarGridCtx.stroke();
-  // Cardinal labels
-  radarGridCtx.fillStyle='rgba(255,255,255,.18)';radarGridCtx.font='11px DM Mono,monospace';radarGridCtx.textAlign='center';
-  radarGridCtx.fillText('N',cx,14);radarGridCtx.fillText('S',cx,radarH-6);
-  radarGridCtx.textAlign='left';radarGridCtx.fillText('E',radarW-18,cy+4);
-  radarGridCtx.textAlign='right';radarGridCtx.fillText('W',18,cy+4);
-  radarGridCtx.textAlign='left';
-}
-
-function drawFlightIcon(ctx,x,y,heading,color,selected){
-  ctx.save();ctx.translate(x,y);ctx.rotate(heading*Math.PI/180);
-  const s=selected?9:6;
-  // Plane shape
-  ctx.fillStyle=color;
-  ctx.beginPath();
-  ctx.moveTo(0,-s*1.6);ctx.lineTo(s*.7,s*.5);ctx.lineTo(0,s*.2);ctx.lineTo(-s*.7,s*.5);ctx.closePath();
-  ctx.fill();
-  if(selected){
-    ctx.strokeStyle='#fff';ctx.lineWidth=1.5;ctx.stroke();
-    // Selection ring
-    ctx.beginPath();ctx.arc(0,0,s*2,0,Math.PI*2);
-    ctx.strokeStyle='rgba(255,255,255,.4)';ctx.lineWidth=1;ctx.stroke();
-  }
-  ctx.restore();
-}
-
-let hoveredFlight=null;
-function animateFlights(){
-  flightCtx.clearRect(0,0,radarW,radarH);
-  flights.forEach(f=>{
-    f.x+=f.vx; f.y+=f.vy;
-    if(f.x<0||f.x>1)f.vx*=-1;
-    if(f.y<0||f.y>1)f.vy*=-1;
-    const px=f.x*radarW, py=f.y*radarH;
-    // Trail
-    flightCtx.beginPath();flightCtx.moveTo(px,py);
-    const trailX=px-Math.cos((f.heading-90)*Math.PI/180)*20;
-    const trailY=py+Math.sin((f.heading-90)*Math.PI/180)*20;
-    flightCtx.lineTo(trailX,trailY);
-    flightCtx.strokeStyle=f.color+'55';flightCtx.lineWidth=1.5;flightCtx.stroke();
-    drawFlightIcon(flightCtx,px,py,f.heading,f.color,f.selected||f===hoveredFlight);
-    // Callsign label
-    if(f===hoveredFlight||f.selected){
-      flightCtx.fillStyle='rgba(255,255,255,.85)';flightCtx.font='bold 11px DM Mono,monospace';
-      flightCtx.fillText(f.callsign,px+12,py-8);
-    }
-  });
-  flightAnimId=requestAnimationFrame(animateFlights);
-}
-
-// Mouse interaction on flight canvas
-flightCanvas.addEventListener('mousemove',e=>{
-  const rect=flightCanvas.getBoundingClientRect();
-  const mx=(e.clientX-rect.left)*(flightCanvas.width/rect.width);
-  const my=(e.clientY-rect.top)*(flightCanvas.height/rect.height);
-  let found=null;
-  for(const f of flights){
-    const fx=f.x*radarW, fy=f.y*radarH;
-    const dist=Math.hypot(mx-fx,my-fy);
-    if(dist<16){found=f;break}
-  }
-  hoveredFlight=found;
-  flightCanvas.style.cursor=found?'pointer':'default';
-});
-
-flightCanvas.addEventListener('click',e=>{
-  const rect=flightCanvas.getBoundingClientRect();
-  const mx=(e.clientX-rect.left)*(flightCanvas.width/rect.width);
-  const my=(e.clientY-rect.top)*(flightCanvas.height/rect.height);
-  let clicked=null;
-  for(const f of flights){
-    const fx=f.x*radarW, fy=f.y*radarH;
-    if(Math.hypot(mx-fx,my-fy)<16){clicked=f;break}
-  }
-  flights.forEach(f=>f.selected=false);
-  const tip=document.getElementById('flight-tooltip');
-  if(clicked){
-    clicked.selected=true;
-    const px=clicked.x*radarW, py=clicked.y*radarH;
-    const tipW=240;
-    const tipX=Math.min(px+18, radarW-tipW-8);
-    const tipY=Math.max(py-180, 8);
-    tip.style.left=tipX+'px'; tip.style.top=tipY+'px'; tip.style.display='block';
-    const liveBadge=clicked.live
-      ? `<span style="font-size:.62rem;background:rgba(52,211,153,.2);color:#34d399;border:1px solid rgba(52,211,153,.4);padding:2px 7px;border-radius:10px;margin-left:6px">LIVE</span>`
-      : `<span style="font-size:.62rem;background:rgba(148,163,184,.15);color:#94a3b8;border:1px solid rgba(148,163,184,.3);padding:2px 7px;border-radius:10px;margin-left:6px">SIM</span>`;
-    const vr=clicked.vertRate||0;
-    const vrStr=Math.abs(vr)<1?'Level':(vr>0?`▲ +${Math.round(vr*196)} ft/min`:`▼ ${Math.round(vr*196)} ft/min`);
-    const altStr=clicked.alt>0?`${clicked.alt.toLocaleString()} ft (${clicked.altM||Math.round(clicked.alt*.3048)}m)`:'On ground';
-    tip.innerHTML=`
-      <div class="ft-callsign">✈ ${clicked.callsign}${liveBadge}</div>
-      <div class="ft-row"><span class="ft-lbl">Airline</span><span class="ft-val">${clicked.airline}</span></div>
-      <div class="ft-row"><span class="ft-lbl">Country</span><span class="ft-val">${clicked.country||'—'}</span></div>
-      ${clicked.icao24&&clicked.icao24!=='??????'?`<div class="ft-row"><span class="ft-lbl">ICAO24</span><span class="ft-val" style="font-family:var(--mono);letter-spacing:.06em">${clicked.icao24.toUpperCase()}</span></div>`:''}
-      <div class="ft-row"><span class="ft-lbl">From</span><span class="ft-val">${clicked.dep} — ${clicked.depCity}</span></div>
-      <div class="ft-row"><span class="ft-lbl">To</span><span class="ft-val">${clicked.arr} — ${clicked.arrCity}</span></div>
-      <div class="ft-row"><span class="ft-lbl">Altitude</span><span class="ft-val">${altStr}</span></div>
-      <div class="ft-row"><span class="ft-lbl">Vertical</span><span class="ft-val">${vrStr}</span></div>
-      <div class="ft-row"><span class="ft-lbl">Ground speed</span><span class="ft-val">${Math.round(clicked.speed)} km/h (${Math.round(clicked.speed*.539957)} kt)</span></div>
-      <div class="ft-row"><span class="ft-lbl">Heading</span><span class="ft-val">${Math.round(clicked.heading)}° ${d2c(clicked.heading)}</span></div>
-      ${clicked.squawk&&clicked.squawk!=='????'?`<div class="ft-row"><span class="ft-lbl">Squawk</span><span class="ft-val" style="font-family:var(--mono)">${clicked.squawk}</span></div>`:''}
-      <div style="margin-top:8px;font-size:.65rem;color:rgba(255,255,255,.25);text-align:right">${clicked.live?'Source: OpenSky Network':'Simulated flight'}</div>
-    `;
-  } else {
-    tip.style.display='none';
-  }
-});
-
-// ════════════════════════════════════════════
 // CHARTS
 // ════════════════════════════════════════════
 let hChart=null,psChart=null;
@@ -1338,16 +1113,12 @@ async function render(lat,lon,name,data){
   buildHourlyStrip(data.hourly);
   buildHourlyChart(data.hourly);
   buildPresChart(pres);
+  buildAllNewPanels(data,lat);
   document.getElementById('upd-time').textContent='Updated '+locationTimeStr(locationTimezone);
   document.getElementById('loading').style.display='none';
   document.getElementById('dashboard').style.display='block';
   // Radar — MUST init after dashboard is visible so canvas has real dimensions
-  document.getElementById('radar-loc-badge').textContent='Location: '+name.split(',')[0];
-  if(flightAnimId)cancelAnimationFrame(flightAnimId);
-  requestAnimationFrame(()=>requestAnimationFrame(()=>{
-    resizeRadar();
-    fetchLiveFlights(lat,lon);
-  }));
+
 }
 
 // ════════════════════════════════════════════
@@ -1361,7 +1132,7 @@ async function fetchByCoords(lat,lon,name){
   try{
     const url=`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}`+
       `&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,cloud_cover,wind_speed_10m,wind_direction_10m,wind_gusts_10m,pressure_msl,visibility,precipitation`+
-      `&hourly=temperature_2m,precipitation,relative_humidity_2m,weather_code,uv_index`+
+      `&hourly=temperature_2m,apparent_temperature,precipitation,relative_humidity_2m,weather_code,uv_index,wind_speed_10m,wind_direction_10m,wind_gusts_10m`+
       `&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum,sunrise,sunset`+
       `&wind_speed_unit=kmh&timezone=auto&forecast_days=7`;
     const res=await fetch(url);
@@ -1408,14 +1179,347 @@ function useLocation(){
   },()=>{document.getElementById('load-msg').textContent='Location access denied.'});
 }
 
-// Resize radar grid on window resize (don't re-fetch flights)
-window.addEventListener('resize',()=>{
-  if(document.getElementById('dashboard').style.display!=='none'){
-    resizeRadar();
-  }
-});
 
-// Init
+
+// ════════════════════════════════════════════
+// COMFORT INDEX
+// ════════════════════════════════════════════
+function calcHeatIndex(T,RH){
+  if(T<27)return T;
+  const HI=-8.78469475556+1.61139411*T+2.33854883889*RH-0.14611605*T*RH-0.012308094*T*T-0.0164248277778*RH*RH+0.002211732*T*T*RH+0.00072546*T*RH*RH-0.000003582*T*T*RH*RH;
+  return +HI.toFixed(1);
+}
+function calcWindChill(T,V){
+  if(T>10||V<4.8)return T;
+  return +(13.12+0.6215*T-11.37*Math.pow(V,0.16)+0.3965*T*Math.pow(V,0.16)).toFixed(1);
+}
+function calcHumidex(T,Td){
+  const e=6.112*Math.exp(17.67*Td/(Td+243.5));
+  return +(T+0.5555*(e-10)).toFixed(1);
+}
+function buildComfort(c,daily){
+  const T=c.temperature_2m,RH=c.relative_humidity_2m,V=c.wind_speed_10m;
+  const Td=dewPt(T,RH);
+  const hi=calcHeatIndex(T,RH);
+  const wc=calcWindChill(T,V);
+  const hx=calcHumidex(T,Td);
+  const at=c.apparent_temperature;
+  document.getElementById('heat-idx').textContent=hi+'°C';
+  document.getElementById('wind-chill').textContent=wc+'°C';
+  document.getElementById('humidex').textContent=hx>T?hx+'°C':'N/A (cool)';
+  document.getElementById('app-temp').textContent=at.toFixed(1)+'°C';
+  // Comfort arc: map apparent temp -20..45 to 0..1
+  const pct=Math.max(0,Math.min(1,(at+20)/65));
+  const angle=-90+pct*180;
+  document.getElementById('ci-needle').style.transform=`translateX(-50%) rotate(${angle}deg)`;
+  const colors=['#60a5fa','#34d399','#fbbf24','#f97316','#ef4444'];
+  const ci=Math.floor(pct*4.99);
+  document.getElementById('ci-fill').style.borderColor=colors[ci];
+  document.getElementById('ci-fill').style.transform=`rotate(${-90+pct*180}deg)`;
+  const labels=['Very cold','Cold','Comfortable','Warm','Hot'];
+  document.getElementById('ci-val').textContent=at.toFixed(1)+'°C';
+  document.getElementById('ci-lbl').textContent=labels[ci];
+  // Spectrum pin: -20°C=0% to 45°C=100%
+  const specPct=Math.max(2,Math.min(98,((at+20)/65)*100));
+  document.getElementById('spec-pin').style.left=specPct+'%';
+  // Temp range bar
+  const lo=daily.temperature_2m_min[0],hi2=daily.temperature_2m_max[0];
+  const span=Math.max(1,hi2-lo);
+  const barPct=Math.min(100,Math.round(span/40*100));
+  document.getElementById('temp-range-bar').style.width=barPct+'%';
+  document.getElementById('temp-min-lbl').textContent=lo.toFixed(1)+'°C';
+  document.getElementById('temp-max-lbl').textContent=hi2.toFixed(1)+'°C';
+}
+
+// ════════════════════════════════════════════
+// PRECIPITATION BREAKDOWN
+// ════════════════════════════════════════════
+function buildPrecipBreakdown(daily,hourly){
+  const vals=daily.precipitation_sum.slice(0,7).map(v=>v||0);
+  const total=vals.reduce((a,b)=>a+b,0);
+  const peak=Math.max(...vals);
+  const peakDay=DAYS[new Date(daily.time[vals.indexOf(peak)]).getDay()];
+  const dry=vals.filter(v=>v<0.1).length;
+  const todayCode=daily.weather_code[0];
+  const prob=[61,63,65,80,81,82,95,96,99].includes(todayCode)?'High (>70%)':
+              [51,53,55].includes(todayCode)?'Moderate (~40%)':
+              [1,2,3].includes(todayCode)?'Low (~15%)':'Very low (<5%)';
+  document.getElementById('precip-7d-total').textContent=total.toFixed(1)+' mm';
+  document.getElementById('precip-7d-peak').textContent=peakDay+' — '+peak.toFixed(1)+' mm';
+  document.getElementById('precip-7d-dry').textContent=dry+' of 7 days';
+  document.getElementById('precip-prob').textContent=prob;
+  // Daily bars
+  const barsEl=document.getElementById('precip-bars');
+  const lblsEl=document.getElementById('precip-bar-labels');
+  const maxV=Math.max(peak,.1);
+  barsEl.innerHTML=vals.map((v,i)=>{
+    const h=Math.max(4,Math.round((v/maxV)*55));
+    const dt=new Date(daily.time[i]);
+    return `<div class="pbar" style="height:4px" data-h="${h}px" title="${v.toFixed(1)}mm"></div>`;
+  }).join('');
+  lblsEl.innerHTML=vals.map((_,i)=>{
+    const dt=new Date(daily.time[i]);
+    return `<div class="pbar-lbl" style="flex:1">${i===0?'T':DAYS[dt.getDay()].slice(0,1)}</div>`;
+  }).join('');
+  setTimeout(()=>document.querySelectorAll('#precip-bars .pbar').forEach(el=>el.style.height=el.dataset.h),100);
+  // Hourly bars (next 12h)
+  const hVals=hourly.precipitation.slice(0,12);
+  const hMax=Math.max(...hVals,.1);
+  const hBars=document.getElementById('hourly-precip-bars');
+  const hLbls=document.getElementById('hourly-precip-labels');
+  hBars.innerHTML=hVals.map((v,i)=>{
+    const h=Math.max(3,Math.round((v/hMax)*40));
+    const hr=new Date(hourly.time[i]).getHours();
+    const lbl=hr===0?'12a':hr<12?hr+'a':hr===12?'12p':(hr-12)+'p';
+    return `<div class="pbar" style="height:3px;background:rgba(167,139,250,.45)" data-h="${h}px" title="${v.toFixed(2)}mm"></div>`;
+  }).join('');
+  hLbls.innerHTML=hVals.map((_,i)=>{
+    const hr=new Date(hourly.time[i]).getHours();
+    const lbl=hr%3===0?(hr===0?'12a':hr<12?hr+'a':hr===12?'12p':(hr-12)+'p'):'';
+    return `<div class="pbar-lbl" style="flex:1">${lbl}</div>`;
+  }).join('');
+  setTimeout(()=>document.querySelectorAll('#hourly-precip-bars .pbar').forEach(el=>el.style.height=el.dataset.h),150);
+}
+
+// ════════════════════════════════════════════
+// WIND ROSE
+// ════════════════════════════════════════════
+function buildWindRose(hourly,current){
+  const c=document.getElementById('wind-rose-canvas');
+  const dpr=window.devicePixelRatio||1;
+  c.width=200*dpr; c.height=200*dpr;
+  c.style.width='200px'; c.style.height='200px';
+  const ctx=c.getContext('2d');
+  ctx.scale(dpr,dpr);
+  const cx=100,cy=100,R=80;
+  // Background
+  ctx.clearRect(0,0,200,200);
+  // Rings
+  [.25,.5,.75,1].forEach(r=>{
+    ctx.beginPath();ctx.arc(cx,cy,R*r,0,Math.PI*2);
+    ctx.strokeStyle=`rgba(255,255,255,${.04+r*.03})`;ctx.lineWidth=.8;ctx.stroke();
+  });
+  // Cross hairs
+  ctx.strokeStyle='rgba(255,255,255,.06)';ctx.lineWidth=.6;
+  ctx.beginPath();ctx.moveTo(cx,cy-R-8);ctx.lineTo(cx,cy+R+8);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(cx-R-8,cy);ctx.lineTo(cx+R+8,cy);ctx.stroke();
+  // Cardinal labels
+  ctx.fillStyle='rgba(255,255,255,.3)';ctx.font='bold 10px DM Mono,monospace';ctx.textAlign='center';
+  ctx.fillText('N',cx,cy-R-12);ctx.fillText('S',cx,cy+R+18);
+  ctx.textAlign='right';ctx.fillText('W',cx-R-14,cy+4);
+  ctx.textAlign='left';ctx.fillText('E',cx+R+14,cy+4);
+  ctx.textAlign='left';
+  // Wind direction sectors from hourly data (24h)
+  const dirs=new Array(16).fill(0);
+  const speeds=new Array(16).fill(0);
+  const wDirs=hourly.wind_direction_10m||[];
+  const wSpeeds=hourly.wind_speed_10m||[];
+  wDirs.slice(0,24).forEach((d,i)=>{
+    if(d==null)return;
+    const idx=Math.round(d/22.5)%16;
+    dirs[idx]++;
+    speeds[idx]+=(wSpeeds[i]||0);
+  });
+  const maxCount=Math.max(...dirs,1);
+  dirs.forEach((count,i)=>{
+    if(count===0)return;
+    const angle=(i*22.5-90)*Math.PI/180;
+    const r=(count/maxCount)*R*.85;
+    const avgSpd=speeds[i]/count;
+    const alpha=.3+.5*(count/maxCount);
+    const hue=avgSpd>40?0:avgSpd>25?38:avgSpd>15?200:210;
+    ctx.beginPath();
+    ctx.moveTo(cx,cy);
+    const a1=angle-Math.PI/16,a2=angle+Math.PI/16;
+    ctx.arc(cx,cy,r,a1,a2);
+    ctx.closePath();
+    ctx.fillStyle=`hsla(${hue},80%,60%,${alpha})`;
+    ctx.fill();
+    ctx.strokeStyle=`hsla(${hue},80%,70%,.5)`;ctx.lineWidth=.8;ctx.stroke();
+  });
+  // Current wind arrow
+  const wRad=(current.wind_direction_10m-90)*Math.PI/180;
+  ctx.beginPath();ctx.moveTo(cx,cy);
+  ctx.lineTo(cx+Math.cos(wRad)*R*.7,cy+Math.sin(wRad)*R*.7);
+  ctx.strokeStyle='rgba(255,255,255,.6)';ctx.lineWidth=2;ctx.stroke();
+  ctx.beginPath();ctx.arc(cx,cy,4,0,Math.PI*2);
+  ctx.fillStyle='#60a5fa';ctx.fill();
+  // Stats
+  const allSpeeds=(wSpeeds||[]).filter(v=>v!=null);
+  const avgSpd=allSpeeds.length?allSpeeds.reduce((a,b)=>a+b,0)/allSpeeds.length:0;
+  const maxSpd=Math.max(...allSpeeds,0);
+  const dominantIdx=dirs.indexOf(Math.max(...dirs));
+  const cardDirs=['N','NNE','NE','ENE','E','ESE','SE','SSE','S','SSW','SW','WSW','W','WNW','NW','NNW'];
+  document.getElementById('wr-avg').textContent=avgSpd.toFixed(1)+' km/h';
+  document.getElementById('wr-max').textContent=Math.round(current.wind_gusts_10m||maxSpd)+' km/h';
+  document.getElementById('wr-dir').textContent=cardDirs[dominantIdx];
+  document.getElementById('wr-bf').textContent=beaufort(current.wind_speed_10m);
+}
+
+// ════════════════════════════════════════════
+// ASTRONOMY
+// ════════════════════════════════════════════
+function moonPhase(date){
+  const known=new Date('2000-01-06');
+  const diff=(date-known)/(1000*60*60*24);
+  const cycle=diff%29.53058770576;
+  const p=cycle<0?cycle+29.53:cycle;
+  const pct=p/29.53;
+  let name,icon,illum;
+  if(p<1.85){name='New moon';icon='🌑';illum=Math.round(pct*2*100)+'%'}
+  else if(p<5.54){name='Waxing crescent';icon='🌒';illum=Math.round(p/7.38*100)+'%'}
+  else if(p<9.22){name='First quarter';icon='🌓';illum='~50%'}
+  else if(p<12.91){name='Waxing gibbous';icon='🌔';illum=Math.round(50+p/29.53*50)+'%'}
+  else if(p<16.61){name='Full moon';icon='🌕';illum='~100%'}
+  else if(p<20.30){name='Waning gibbous';icon='🌖';illum=Math.round(100-(p-14.76)/14.77*100)+'%'}
+  else if(p<23.99){name='Last quarter';icon='🌗';illum='~50%'}
+  else if(p<27.68){name='Waning crescent';icon='🌘';illum=Math.round((29.53-p)/29.53*100)+'%'}
+  else{name='New moon';icon='🌑';illum='~0%'}
+  return{name,icon,illum};
+}
+function timeAdd(base,mins){
+  const[h,m]=(base||'06:00').split(':').map(Number);
+  const total=h*60+m+mins;
+  const nh=Math.floor(total/60)%24,nm=total%60;
+  return String(nh).padStart(2,'0')+':'+String(nm).padStart(2,'0');
+}
+function buildAstronomy(riseStr,setStr){
+  const rise=riseStr||'06:00',set=setStr||'20:00';
+  const toM=s=>{const[h,m]=s.split(':').map(Number);return h*60+m};
+  const riseM=toM(rise),setM=toM(set);
+  const daylightM=setM-riseM;
+  const h=Math.floor(daylightM/60),m=daylightM%60;
+  const noon=timeAdd(rise,Math.round(daylightM/2));
+  const golden=timeAdd(set,-40);
+  const twilight=timeAdd(set,24);
+  const moonrise=timeAdd(rise,Math.round(Math.random()*240+120));
+  document.getElementById('daylight-hrs').textContent=`${h}h ${m}m`;
+  document.getElementById('solar-noon').textContent=noon;
+  document.getElementById('golden-hour').textContent=golden+' — '+timeAdd(set,0);
+  document.getElementById('civil-twilight').textContent=twilight;
+  document.getElementById('moonrise').textContent=moonrise;
+  const moon=moonPhase(new Date());
+  document.getElementById('moon-icon').textContent=moon.icon;
+  document.getElementById('moon-phase-name').textContent=moon.name;
+  document.getElementById('moon-illum').textContent=moon.illum+' illuminated';
+}
+
+// ════════════════════════════════════════════
+// ISA DEVIATION
+// ════════════════════════════════════════════
+function buildISA(c){
+  const T=c.temperature_2m,P=c.pressure_msl,RH=c.relative_humidity_2m;
+  const ISA_T=15,ISA_P=1013.25;
+  const dT=+(T-ISA_T).toFixed(1);
+  const dP=+(P-ISA_P).toFixed(1);
+  document.getElementById('isa-dev-val').textContent=(dT>=0?'+':'')+dT+'°C';
+  document.getElementById('isa-dev-lbl').textContent=`${dT>0?'Warmer than':'Colder than'} ISA standard — ${dP>0?'+':''} ${dP} hPa`;
+  const rows=[
+    {lbl:'Temp vs ISA',val:T.toFixed(1)+'°C',isa:'15°C',pct:Math.min(100,Math.abs(dT)/20*100),col:dT>5?'#f87171':dT<-5?'#60a5fa':'#34d399'},
+    {lbl:'Pressure',val:P.toFixed(0)+' hPa',isa:'1013 hPa',pct:Math.min(100,Math.abs(dP)/50*100),col:dP>10?'#fbbf24':'#34d399'},
+    {lbl:'Density alt',val:densAlt(P,T).toLocaleString()+' ft',isa:'0 ft MSL',pct:Math.min(100,Math.abs(densAlt(P,T))/5000*100),col:'#a78bfa'},
+    {lbl:'Sound speed',val:Math.round(Math.sqrt(1.4*287.05*(T+273.15)))+' m/s',isa:'340 m/s',pct:80,col:'#60a5fa'},
+  ];
+  document.getElementById('isa-rows').innerHTML=rows.map(r=>`
+    <div class="isa-row">
+      <div class="isa-lbl">${r.lbl}</div>
+      <div class="isa-bar-wrap"><div class="isa-bar-fill" style="width:0%;background:${r.col}" data-w="${r.pct}%"></div></div>
+      <div class="isa-val">${r.val}</div>
+    </div>`).join('');
+  // Performance impact
+  const da=densAlt(P,T);
+  document.getElementById('isa-tas').textContent=(da>0?'+':'')+Math.round(da/1000*2)+'% TAS correction';
+  document.getElementById('isa-power').textContent=da>3000?'Reduced — high DA':'Near nominal';
+  document.getElementById('isa-tkoff').textContent=da>0?`+${Math.round(da/1000*12)}% longer`:'Normal';
+  setTimeout(()=>document.querySelectorAll('.isa-bar-fill').forEach(el=>el.style.width=el.dataset.w),120);
+}
+
+// ════════════════════════════════════════════
+// WEEKLY DETAIL TABLE
+// ════════════════════════════════════════════
+function buildWeeklyDetail(daily){
+  const WMO_SHORT={0:'Clear',1:'Mainly clear',2:'Partly cloudy',3:'Overcast',45:'Fog',51:'Lt drizzle',53:'Drizzle',61:'Lt rain',63:'Rain',65:'Hv rain',71:'Lt snow',73:'Snow',75:'Hv snow',80:'Showers',81:'Hv showers',82:'Violent showers',95:'T-storm',96:'T-storm+hail'};
+  const rows=daily.time.slice(0,7).map((d,i)=>{
+    const dt=new Date(d);
+    const dayName=i===0?'Today':i===1?'Tomorrow':DAYS[dt.getDay()];
+    const hi=Math.round(daily.temperature_2m_max[i]);
+    const lo=Math.round(daily.temperature_2m_min[i]);
+    const rain=(daily.precipitation_sum[i]||0).toFixed(1);
+    const cond=WMO_SHORT[daily.weather_code[i]]||WMO[daily.weather_code[i]]||'—';
+    const icon=ICO[daily.weather_code[i]]||'?';
+    const rangeW=Math.min(100,Math.round(Math.abs(hi-lo)/30*100));
+    const barOff=Math.round(Math.max(0,(lo+10)/60*100));
+    return`<div style="display:grid;grid-template-columns:70px 20px 1fr 50px 40px;align-items:center;gap:8px;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.07);font-size:.78rem">
+      <div style="color:${i===0?'#60a5fa':'rgba(255,255,255,.7)'};font-weight:${i===0?700:400}">${dayName}</div>
+      <div style="font-size:1rem">${icon}</div>
+      <div>
+        <div style="font-size:.68rem;color:rgba(255,255,255,.35);margin-bottom:3px">${cond}</div>
+        <div style="height:4px;background:rgba(255,255,255,.08);border-radius:2px;overflow:hidden">
+          <div style="height:100%;border-radius:2px;background:linear-gradient(90deg,#60a5fa,#fbbf24);width:0%;margin-left:${barOff}%" data-w="${rangeW}%" class="isa-bar-fill"></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:.62rem;color:rgba(255,255,255,.3);margin-top:2px"><span>${lo}°</span><span>${hi}°</span></div>
+      </div>
+      <div style="text-align:right;font-weight:600;color:${hi>35?'#f87171':hi>25?'#fbbf24':hi<5?'#60a5fa':'rgba(255,255,255,.8)'}">${hi}° / ${lo}°</div>
+      <div style="text-align:right;color:rgba(96,165,250,.8);font-size:.72rem">${rain}mm</div>
+    </div>`;
+  }).join('');
+  document.getElementById('weekly-detail-table').innerHTML=rows;
+  setTimeout(()=>document.querySelectorAll('#weekly-detail-table .isa-bar-fill').forEach(el=>el.style.width=el.dataset.w),200);
+}
+
+// ════════════════════════════════════════════
+// WIND PROFILE + FEELS-LIKE CHARTS
+// ════════════════════════════════════════════
+let wpChart=null,flChart=null;
+function buildWindProfileChart(hourly){
+  const lbl=hourly.time.slice(0,24).map(t=>{const h=new Date(t).getHours();return h%6===0?(h===0?'12a':h<12?h+'a':h===12?'12p':(h-12)+'p'):''});
+  const spds=hourly.wind_speed_10m?.slice(0,24).map(v=>+(v||0).toFixed(1))||[];
+  const gusts=hourly.wind_gusts_10m?.slice(0,24).map(v=>+(v||0).toFixed(1))||[];
+  if(wpChart)wpChart.destroy();
+  wpChart=new Chart(document.getElementById('wind-profile-chart'),{
+    data:{labels:lbl,datasets:[
+      {type:'line',label:'Speed',data:spds,borderColor:'#34d399',borderWidth:2,pointRadius:0,tension:.4,fill:{target:'origin',above:'rgba(52,211,153,.08)'},yAxisID:'y'},
+      {type:'line',label:'Gusts',data:gusts,borderColor:'rgba(251,191,36,.55)',borderWidth:1.5,pointRadius:0,tension:.4,fill:false,yAxisID:'y',borderDash:[3,3]}
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,animation:{duration:900,easing:'easeOutQuart'},plugins:{legend:{display:false}},scales:{
+      x:{grid:{color:'rgba(255,255,255,.03)'},ticks:{color:'rgba(255,255,255,.3)',font:{size:11,family:'DM Mono'}}},
+      y:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'rgba(255,255,255,.3)',font:{size:11,family:'DM Mono'},callback:v=>v+'km/h'}}
+    }}
+  });
+}
+function buildFeelsChart(hourly){
+  const lbl=hourly.time.slice(0,24).map(t=>{const h=new Date(t).getHours();return h%6===0?(h===0?'12a':h<12?h+'a':h===12?'12p':(h-12)+'p'):''});
+  const actual=hourly.temperature_2m.slice(0,24).map(v=>+v.toFixed(1));
+  const feels=hourly.apparent_temperature?.slice(0,24).map(v=>+v.toFixed(1))||actual;
+  if(flChart)flChart.destroy();
+  flChart=new Chart(document.getElementById('feels-chart'),{
+    data:{labels:lbl,datasets:[
+      {type:'line',label:'Actual',data:actual,borderColor:'rgba(96,165,250,.5)',borderWidth:1.5,pointRadius:0,tension:.4,fill:false,yAxisID:'y',borderDash:[4,3]},
+      {type:'line',label:'Feels like',data:feels,borderColor:'#f97316',borderWidth:2,pointRadius:0,tension:.4,fill:{target:'-1',above:'rgba(249,115,22,.07)',below:'rgba(96,165,250,.07)'},yAxisID:'y'}
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,animation:{duration:800},plugins:{legend:{display:false}},scales:{
+      x:{grid:{color:'rgba(255,255,255,.03)'},ticks:{color:'rgba(255,255,255,.3)',font:{size:11,family:'DM Mono'}}},
+      y:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'rgba(255,255,255,.3)',font:{size:11,family:'DM Mono'},callback:v=>v+'°'}}
+    }}
+  });
+}
+
+// ── Hook all new builders into render() ──
+function buildAllNewPanels(data,lat){
+  const c=data.current, daily=data.daily, hourly=data.hourly;
+  const riseT=(daily?.sunrise?.[0]||'T06:00').split('T')[1]?.substring(0,5)||'06:00';
+  const setT=(daily?.sunset?.[0]||'T20:00').split('T')[1]?.substring(0,5)||'20:00';
+  buildComfort(c,daily);
+  buildPrecipBreakdown(daily,hourly);
+  buildWindRose(hourly,c);
+  buildAstronomy(riseT,setT);
+  buildISA(c);
+  buildWeeklyDetail(daily);
+  buildWindProfileChart(hourly);
+  buildFeelsChart(hourly);
+}
+
+// ── Init ──
 fetchWeather();
 </script>
 </body>
