@@ -506,6 +506,29 @@ function lerp(a,b,t){return a+(b-a)*t}
 function lerpColor(c1,c2,t){const[r1,g1,b1]=hexToRgb(c1),[r2,g2,b2]=hexToRgb(c2);return`rgb(${Math.round(lerp(r1,r2,t))},${Math.round(lerp(g1,g2,t))},${Math.round(lerp(b1,b2,t))})`}
 
 let currentTOD='day';
+let locationTimezone=''; // IANA timezone string e.g. "Asia/Kolkata"
+
+// Get fractional hour (0-24) in the location's timezone
+function locationHour(){
+  if(!locationTimezone) return new Date().getHours()+new Date().getMinutes()/60;
+  try{
+    const parts=new Intl.DateTimeFormat('en-US',{
+      timeZone:locationTimezone,hour:'numeric',minute:'numeric',hour12:false
+    }).formatToParts(new Date());
+    const h=parseInt(parts.find(p=>p.type==='hour').value);
+    const m=parseInt(parts.find(p=>p.type==='minute').value);
+    return (h===24?0:h)+m/60;
+  }catch(e){return new Date().getHours()+new Date().getMinutes()/60}
+}
+
+// Format local time string for a given timezone
+function locationTimeStr(tz){
+  if(!tz) return new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+  try{
+    return new Date().toLocaleTimeString('en-US',{timeZone:tz,hour:'2-digit',minute:'2-digit'});
+  }catch(e){return new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}
+}
+
 function drawSky(tod){
   const s=SKY[tod]||SKY.day;
   const grad=skyCtx.createLinearGradient(0,0,0,skyH);
@@ -582,7 +605,7 @@ function updateCelestialBodies(h){
 
 let skyAnimFrame;
 function animateSky(){
-  const h=new Date().getHours()+new Date().getMinutes()/60;
+  const h=locationHour();
   const tod=getTimeOfDay(Math.floor(h));
   currentTOD=tod;
   skyCtx.clearRect(0,0,skyW,skyH);
@@ -590,6 +613,9 @@ function animateSky(){
   drawStars(tod);
   drawClouds(tod);
   updateCelestialBodies(h);
+  // Live clock tick — update header time display every second
+  const timeEl=document.getElementById('loc-time');
+  if(timeEl&&locationTimezone) timeEl.textContent=locationTimeStr(locationTimezone);
   skyAnimFrame=requestAnimationFrame(animateSky);
 }
 animateSky();
@@ -1018,7 +1044,7 @@ function drawSunArc(riseStr,setStr){
   const H=66,r=W/2-16,cx=W/2,cy=H;
   const toM=s=>{const[h,m]=(s||'06:00').split(':').map(Number);return h*60+m};
   const rise=toM(riseStr),set=toM(setStr);
-  const now=new Date().getHours()*60+new Date().getMinutes();
+  const now=Math.floor(locationHour())*60+Math.round((locationHour()%1)*60);
   const pct=Math.max(0,Math.min(1,(now-rise)/(set-rise)));
   ctx.beginPath();ctx.arc(cx,cy,r,Math.PI,0,false);
   ctx.strokeStyle='rgba(255,255,255,.1)';ctx.lineWidth=1.5;ctx.stroke();
@@ -1052,7 +1078,7 @@ function buildForecast(daily){
 }
 
 function buildHourlyStrip(hourly){
-  const nowH=new Date().getHours();
+  const nowH=Math.floor(locationHour());
   document.getElementById('hourly-strip').innerHTML=hourly.time.slice(0,24).map((t,i)=>{
     const h=new Date(t).getHours();
     const lbl=h===0?'12am':h<12?h+'am':h===12?'12pm':(h-12)+'pm';
@@ -1080,10 +1106,13 @@ function buildAloft(tB,wB,dB){
 async function render(lat,lon,name,data){
   const c=data.current;
   currentLat=lat;currentLon=lon;
+  // ── Set location timezone FIRST so sky updates immediately ──
+  locationTimezone=data.timezone||'';
+  const locH=locationHour();
   document.getElementById('loc-name').textContent=name;
   document.getElementById('loc-coords').textContent=`${lat.toFixed(3)}°, ${lon.toFixed(3)}°`;
-  document.getElementById('loc-time').textContent=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
-  document.getElementById('loc-tz').textContent=data.timezone||'';
+  document.getElementById('loc-time').textContent=locationTimeStr(locationTimezone);
+  document.getElementById('loc-tz').textContent=locationTimezone||'';
   document.getElementById('loc-cond').textContent=WMO[c.weather_code]||'Unknown';
   document.getElementById('big-temp').textContent=Math.round(c.temperature_2m);
   document.getElementById('feels-like').textContent=`Feels like ${Math.round(c.apparent_temperature)}°C`;
@@ -1128,7 +1157,7 @@ async function render(lat,lon,name,data){
   document.getElementById('den-alt').textContent=densAlt(c.pressure_msl,c.temperature_2m).toLocaleString()+' ft';
   document.getElementById('wet-b').textContent=wetBulb(c.temperature_2m,c.relative_humidity_2m)+'°C';
   document.getElementById('tropo').textContent=`~${Math.round(36090-Math.abs(lat)*200)} ft`;
-  const uvIdx=data.hourly?.uv_index?.[new Date().getHours()]||Math.round(Math.random()*5+1);
+  const uvIdx=data.hourly?.uv_index?.[Math.floor(locH)]||Math.round(Math.random()*5+1);
   buildUVGauge(uvIdx);
   const riseT=(data.daily?.sunrise?.[0]||'T06:00').split('T')[1]?.substring(0,5)||'06:00';
   const setT=(data.daily?.sunset?.[0]||'T20:00').split('T')[1]?.substring(0,5)||'20:00';
@@ -1146,7 +1175,7 @@ async function render(lat,lon,name,data){
   generateFlights(lat,lon);
   if(flightAnimId)cancelAnimationFrame(flightAnimId);
   setTimeout(()=>{resizeRadar();animateFlights()},100);
-  document.getElementById('upd-time').textContent='Updated '+new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+  document.getElementById('upd-time').textContent='Updated '+locationTimeStr(locationTimezone);
   document.getElementById('loading').style.display='none';
   document.getElementById('dashboard').style.display='block';
 }
