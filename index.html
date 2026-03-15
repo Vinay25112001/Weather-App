@@ -792,69 +792,225 @@ function buildMETAR(name,c){
 // ════════════════════════════════════════════
 // FLIGHT RADAR
 // ════════════════════════════════════════════
-const AIRLINES=[
-  {cs:'AAL',name:'American Airlines',iata:'AA',icao:'AAL',color:'#dc2626'},
-  {cs:'UAL',name:'United Airlines',iata:'UA',icao:'UAL',color:'#1d4ed8'},
-  {cs:'DAL',name:'Delta Air Lines',iata:'DL',icao:'DAL',color:'#7c3aed'},
-  {cs:'SWA',name:'Southwest Airlines',iata:'WN',icao:'SWA',color:'#d97706'},
-  {cs:'BAW',name:'British Airways',iata:'BA',icao:'BAW',color:'#1e40af'},
-  {cs:'DLH',name:'Lufthansa',iata:'LH',icao:'DLH',color:'#1e3a5f'},
-  {cs:'AFR',name:'Air France',iata:'AF',icao:'AFR',color:'#be123c'},
-  {cs:'UAE',name:'Emirates',iata:'EK',icao:'UAE',color:'#b45309'},
-  {cs:'RYR',name:'Ryanair',iata:'FR',icao:'RYR',color:'#166534'},
-  {cs:'FDX',name:'FedEx',iata:'FX',icao:'FDX',color:'#7c2d12'},
-  {cs:'UPS',name:'UPS Airlines',iata:'5X',icao:'UPS',color:'#92400e'},
-  {cs:'ANZ',name:'Air New Zealand',iata:'NZ',icao:'ANZ',color:'#065f46'},
-];
-const AIRPORTS=[
-  {code:'JFK',name:'John F. Kennedy',city:'New York'},{code:'LAX',name:'Los Angeles Intl',city:'Los Angeles'},
-  {code:'ORD',name:"O'Hare Intl",city:'Chicago'},{code:'ATL',name:'Hartsfield-Jackson',city:'Atlanta'},
-  {code:'DFW',name:'Dallas Fort Worth',city:'Dallas'},{code:'DEN',name:'Denver Intl',city:'Denver'},
-  {code:'SFO',name:'San Francisco Intl',city:'San Francisco'},{code:'SEA',name:'Seattle-Tacoma',city:'Seattle'},
-  {code:'MIA',name:'Miami Intl',city:'Miami'},{code:'BOS',name:'Logan Intl',city:'Boston'},
-  {code:'LHR',name:'Heathrow',city:'London'},{code:'CDG',name:'Charles de Gaulle',city:'Paris'},
-  {code:'FRA',name:'Frankfurt Intl',city:'Frankfurt'},{code:'AMS',name:'Schiphol',city:'Amsterdam'},
-  {code:'DXB',name:'Dubai Intl',city:'Dubai'},{code:'SYD',name:'Kingsford Smith',city:'Sydney'},
-  {code:'NRT',name:'Narita Intl',city:'Tokyo'},{code:'CAN',name:'Baiyun Intl',city:'Guangzhou'},
-];
-const AIRCRAFT_TYPES=['B737','B738','B739','A319','A320','A321','B77W','B788','A332','A333','A359','B744','C172','B752','A306'];
+// ════════════════════════════════════════════
+// AIRLINE & AIRCRAFT LOOKUP TABLES
+// ════════════════════════════════════════════
+const AIRLINE_ICAO={
+  AAL:{name:'American Airlines',country:'USA',color:'#dc2626'},
+  UAL:{name:'United Airlines',country:'USA',color:'#1d4ed8'},
+  DAL:{name:'Delta Air Lines',country:'USA',color:'#7c3aed'},
+  SWA:{name:'Southwest Airlines',country:'USA',color:'#d97706'},
+  ASA:{name:'Alaska Airlines',country:'USA',color:'#0e7490'},
+  JBU:{name:'JetBlue Airways',country:'USA',color:'#0284c7'},
+  SKW:{name:'SkyWest Airlines',country:'USA',color:'#475569'},
+  FFT:{name:'Frontier Airlines',country:'USA',color:'#15803d'},
+  BAW:{name:'British Airways',country:'UK',color:'#1e40af'},
+  DLH:{name:'Lufthansa',country:'Germany',color:'#1e3a8a'},
+  AFR:{name:'Air France',country:'France',color:'#be123c'},
+  UAE:{name:'Emirates',country:'UAE',color:'#b45309'},
+  QTR:{name:'Qatar Airways',country:'Qatar',color:'#7f1d1d'},
+  ETH:{name:'Ethiopian Airlines',country:'Ethiopia',color:'#166534'},
+  THY:{name:'Turkish Airlines',country:'Turkey',color:'#991b1b'},
+  RYR:{name:'Ryanair',country:'Ireland',color:'#065f46'},
+  EZY:{name:'easyJet',country:'UK',color:'#ea580c'},
+  VIR:{name:'Virgin Atlantic',country:'UK',color:'#be185d'},
+  KLM:{name:'KLM',country:'Netherlands',color:'#0369a1'},
+  SIA:{name:'Singapore Airlines',country:'Singapore',color:'#f59e0b'},
+  CPA:{name:'Cathay Pacific',country:'Hong Kong',color:'#0f766e'},
+  ANA:{name:'All Nippon Airways',country:'Japan',color:'#1d4ed8'},
+  JAL:{name:'Japan Airlines',country:'Japan',color:'#dc2626'},
+  AIC:{name:'Air India',country:'India',color:'#b45309'},
+  IGO:{name:'IndiGo',country:'India',color:'#4338ca'},
+  SEJ:{name:'SpiceJet',country:'India',color:'#dc2626'},
+  FDX:{name:'FedEx Express',country:'USA',color:'#7c2d12'},
+  UPS:{name:'UPS Airlines',country:'USA',color:'#92400e'},
+  GTI:{name:'Atlas Air',country:'USA',color:'#374151'},
+  CAL:{name:'China Airlines',country:'Taiwan',color:'#dc2626'},
+  CCA:{name:'Air China',country:'China',color:'#dc2626'},
+  CSN:{name:'China Southern',country:'China',color:'#1d4ed8'},
+  CES:{name:'China Eastern',country:'China',color:'#dc2626'},
+  KAL:{name:'Korean Air',country:'South Korea',color:'#1e40af'},
+  ANZ:{name:'Air New Zealand',country:'New Zealand',color:'#1f2937'},
+  QFA:{name:'Qantas',country:'Australia',color:'#dc2626'},
+  VJC:{name:'VietJet Air',country:'Vietnam',color:'#dc2626'},
+  ITY:{name:'ITA Airways',country:'Italy',color:'#1d4ed8'},
+  IBE:{name:'Iberia',country:'Spain',color:'#dc2626'},
+  TAP:{name:'TAP Air Portugal',country:'Portugal',color:'#15803d'},
+};
 
+// ICAO prefix → country
+const ICAO_COUNTRY={
+  'a':'USA','c':'Canada','e':'UK / Europe','d':'Germany','f':'France',
+  '4b':'Switzerland','38':'Germany','3c':'Austria','48':'Poland','49':'Czech Republic',
+  '80':'India','89':'Japan','7c':'Australia','c0':'Canada','76':'Mexico',
+  '71':'Mexico','b8':'UAE','b9':'UAE','896':'India','800':'India'
+};
+
+function lookupAirline(callsign){
+  if(!callsign||callsign.trim()==='') return null;
+  const cs=callsign.trim().toUpperCase();
+  const prefix=cs.substring(0,3);
+  if(AIRLINE_ICAO[prefix]) return {...AIRLINE_ICAO[prefix],prefix};
+  const prefix2=cs.substring(0,2);
+  for(const[k,v] of Object.entries(AIRLINE_ICAO)){
+    if(k.startsWith(prefix2)) return {...v,prefix:k};
+  }
+  return null;
+}
+
+function getFlightNumber(callsign){
+  if(!callsign) return '????';
+  return callsign.trim().replace(/^[A-Z]{2,3}/,'') || callsign.trim();
+}
+
+// Random airport for unknown origin/dest
+const SIM_AIRPORTS=[
+  {code:'JFK',city:'New York'},{code:'LAX',city:'Los Angeles'},
+  {code:'ORD',city:'Chicago'},{code:'ATL',city:'Atlanta'},
+  {code:'LHR',city:'London'},{code:'CDG',city:'Paris'},
+  {code:'FRA',city:'Frankfurt'},{code:'DXB',city:'Dubai'},
+  {code:'BOM',city:'Mumbai'},{code:'DEL',city:'Delhi'},
+  {code:'HYD',city:'Hyderabad'},{code:'MAA',city:'Chennai'},
+  {code:'BLR',city:'Bangalore'},{code:'CCU',city:'Kolkata'},
+  {code:'SIN',city:'Singapore'},{code:'NRT',city:'Tokyo'},
+  {code:'SYD',city:'Sydney'},{code:'IST',city:'Istanbul'},
+  {code:'AMS',city:'Amsterdam'},{code:'MAD',city:'Madrid'},
+];
+function randAirport(seed){
+  const i=Math.abs(seed||Math.random()*1000)%SIM_AIRPORTS.length;
+  return SIM_AIRPORTS[Math.floor(i)];
+}
+
+// ════════════════════════════════════════════
+// FLIGHT RADAR — OPENSKY + FALLBACK
+// ════════════════════════════════════════════
 let flights=[];
 let radarW=0,radarH=0;
 let currentLat=39.76,currentLon=-84.19;
+let radarLat=currentLat,radarLon=currentLon;
+const RADAR_RANGE_DEG=2.5; // ~275km radius
 
-function generateFlights(lat,lon){
+async function fetchLiveFlights(lat,lon){
+  radarLat=lat; radarLon=lon;
+  document.getElementById('radar-count-badge').textContent='Aircraft: loading...';
+  document.getElementById('radar-loc-badge').textContent='Location: '+document.getElementById('loc-name').textContent.split(',')[0];
+  const lamin=(lat-RADAR_RANGE_DEG).toFixed(4);
+  const lamax=(lat+RADAR_RANGE_DEG).toFixed(4);
+  const lomin=(lon-RADAR_RANGE_DEG).toFixed(4);
+  const lomax=(lon+RADAR_RANGE_DEG).toFixed(4);
+  try{
+    const res=await fetch(
+      `https://opensky-network.org/api/states/all?lamin=${lamin}&lomin=${lomin}&lamax=${lamax}&lomax=${lomax}`,
+      {signal:AbortSignal.timeout(8000)}
+    );
+    if(!res.ok) throw new Error('HTTP '+res.status);
+    const data=await res.json();
+    if(data.states&&data.states.length>0){
+      parseOpenSkyData(data.states,lat,lon);
+      document.getElementById('radar-count-badge').textContent=`Aircraft: ${flights.length} (live)`;
+    } else {
+      generateSimFlights(lat,lon);
+      document.getElementById('radar-count-badge').textContent=`Aircraft: ${flights.length} (simulated — no traffic)`;
+    }
+  }catch(e){
+    console.warn('OpenSky unavailable, using simulation:',e.message);
+    generateSimFlights(lat,lon);
+    document.getElementById('radar-count-badge').textContent=`Aircraft: ${flights.length} (simulated)`;
+  }
+  if(flightAnimId) cancelAnimationFrame(flightAnimId);
+  animateFlights();
+}
+
+function parseOpenSkyData(states,centerLat,centerLon){
+  // OpenSky state vector fields:
+  // [0]icao24 [1]callsign [2]origin_country [3]time_position [4]last_contact
+  // [5]longitude [6]latitude [7]baro_altitude [8]on_ground [9]velocity
+  // [10]true_track [11]vertical_rate [12]sensors [13]geo_altitude
+  // [14]squawk [15]spi [16]position_source
+  flights=states
+    .filter(s=>s[8]===false && s[5]!=null && s[6]!=null) // airborne, has position
+    .slice(0,40)
+    .map((s,i)=>{
+      const callsign=(s[1]||'').trim();
+      const airline=lookupAirline(callsign);
+      const lon_f=parseFloat(s[5]), lat_f=parseFloat(s[6]);
+      const alt=s[13]||s[7]||0; // geo_altitude or baro
+      const speed_ms=s[9]||0;
+      const heading=s[10]||0;
+      // Convert real lat/lon to radar canvas fraction
+      const nx=0.5+(lon_f-centerLon)/(RADAR_RANGE_DEG*2);
+      const ny=0.5-(lat_f-centerLat)/(RADAR_RANGE_DEG*2);
+      // Speed in canvas units per frame (≈60fps, 1 deg = canvas width)
+      const kmh=speed_ms*3.6;
+      const degPerSec=kmh/(111*3600);
+      const vx=Math.sin(heading*Math.PI/180)*degPerSec/(RADAR_RANGE_DEG*2)/60;
+      const vy=-Math.cos(heading*Math.PI/180)*degPerSec/(RADAR_RANGE_DEG*2)/60;
+      const seed=i*7+Math.floor(lat_f*10);
+      const dep=randAirport(seed);
+      const arr=randAirport(seed+5);
+      return{
+        id:i,
+        icao24:s[0]||'??????',
+        callsign:callsign||'??????',
+        airline:airline?airline.name:(s[2]||'Unknown'),
+        country:airline?airline.country:(s[2]||'Unknown'),
+        squawk:s[14]||'????',
+        dep:dep.code, depCity:dep.city,
+        arr:arr.code, arrCity:arr.city,
+        aircraft:'Unknown',
+        heading, speed:kmh,
+        alt:Math.round(alt*3.281), // m → ft
+        altM:Math.round(alt),
+        x:Math.max(0.02,Math.min(.98,nx)),
+        y:Math.max(0.02,Math.min(.98,ny)),
+        vx,vy,
+        color:airline?airline.color:'#94a3b8',
+        selected:false, live:true,
+        lat:lat_f, lon:lon_f,
+        vertRate:s[11]||0
+      };
+    });
+}
+
+function generateSimFlights(lat,lon){
+  // Realistic simulation when OpenSky is unavailable
+  const SIM_AIRLINES=Object.entries(AIRLINE_ICAO).slice(0,20);
   flights=[];
-  const count=14+Math.floor(Math.random()*8);
+  const count=12+Math.floor(Math.random()*10);
   for(let i=0;i<count;i++){
-    const airline=AIRLINES[Math.floor(Math.random()*AIRLINES.length)];
-    const flightNum=Math.floor(100+Math.random()*9900);
-    const dep=AIRPORTS[Math.floor(Math.random()*AIRPORTS.length)];
-    let arr=AIRPORTS[Math.floor(Math.random()*AIRPORTS.length)];
-    while(arr.code===dep.code)arr=AIRPORTS[Math.floor(Math.random()*AIRPORTS.length)];
+    const [prefix,al]=SIM_AIRLINES[i%SIM_AIRLINES.length];
+    const flightNum=String(100+Math.floor(Math.random()*9900)).padStart(4,'0');
     const heading=Math.random()*360;
-    const speed=400+Math.random()*400; // km/h
-    const alt=Math.floor(2000+Math.random()*38000);
-    // Position within ~200km radius
-    const dist=Math.random()*0.9;
+    const speed=350+Math.random()*550;
+    const alt=Math.floor(5000+Math.random()*35000);
     const angle=Math.random()*Math.PI*2;
-    const dx=Math.cos(angle)*dist;
-    const dy=Math.sin(angle)*dist;
+    const dist=.1+Math.random()*.85;
+    const nx=.5+Math.cos(angle)*dist*.45;
+    const ny=.5+Math.sin(angle)*dist*.45;
+    const kmh=speed;
+    const degPerSec=kmh/(111*3600);
+    const vx=Math.sin(heading*Math.PI/180)*degPerSec/(RADAR_RANGE_DEG*2)/60;
+    const vy=-Math.cos(heading*Math.PI/180)*degPerSec/(RADAR_RANGE_DEG*2)/60;
+    const dep=randAirport(i*3);
+    const arr=randAirport(i*3+4);
     flights.push({
-      id:i,callsign:airline.cs+flightNum,airline:airline.name,
-      dep:dep.code,depName:dep.name,depCity:dep.city,
-      arr:arr.code,arrName:arr.name,arrCity:arr.city,
-      aircraft:AIRCRAFT_TYPES[Math.floor(Math.random()*AIRCRAFT_TYPES.length)],
-      heading,speed,alt,
-      x:0.5+dx*.42, y:0.5+dy*.42, // normalized 0-1
-      vx:Math.cos((heading-90)*Math.PI/180)*.0008,
-      vy:-Math.sin((heading-90)*Math.PI/180)*.0008,
-      color:airline.color,
-      lat:lat+dy*3, lon:lon+dx*3,
-      selected:false
+      id:i, icao24:'??????',
+      callsign:prefix+flightNum,
+      airline:al.name, country:al.country,
+      squawk:String(1000+Math.floor(Math.random()*6000)),
+      dep:dep.code,depCity:dep.city,
+      arr:arr.code,arrCity:arr.city,
+      aircraft:'',heading,speed:kmh,
+      alt:Math.round(alt/100)*100,
+      altM:Math.round(alt*.3048),
+      x:Math.max(.02,Math.min(.98,nx)),
+      y:Math.max(.02,Math.min(.98,ny)),
+      vx,vy,color:al.color,selected:false,live:false,
+      lat:lat+(ny-.5)*RADAR_RANGE_DEG*2,
+      lon:lon+(nx-.5)*RADAR_RANGE_DEG*2,
+      vertRate:0
     });
   }
-  document.getElementById('radar-count-badge').textContent='Aircraft: '+flights.length;
 }
 
 const flightCanvas=document.getElementById('flight-canvas');
@@ -967,17 +1123,29 @@ flightCanvas.addEventListener('click',e=>{
   if(clicked){
     clicked.selected=true;
     const px=clicked.x*radarW, py=clicked.y*radarH;
-    const tipX=Math.min(px+20,radarW-240), tipY=Math.max(py-160,10);
-    tip.style.left=tipX+'px';tip.style.top=tipY+'px';tip.style.display='block';
+    const tipW=240;
+    const tipX=Math.min(px+18, radarW-tipW-8);
+    const tipY=Math.max(py-180, 8);
+    tip.style.left=tipX+'px'; tip.style.top=tipY+'px'; tip.style.display='block';
+    const liveBadge=clicked.live
+      ? `<span style="font-size:.62rem;background:rgba(52,211,153,.2);color:#34d399;border:1px solid rgba(52,211,153,.4);padding:2px 7px;border-radius:10px;margin-left:6px">LIVE</span>`
+      : `<span style="font-size:.62rem;background:rgba(148,163,184,.15);color:#94a3b8;border:1px solid rgba(148,163,184,.3);padding:2px 7px;border-radius:10px;margin-left:6px">SIM</span>`;
+    const vr=clicked.vertRate||0;
+    const vrStr=Math.abs(vr)<1?'Level':(vr>0?`▲ +${Math.round(vr*196)} ft/min`:`▼ ${Math.round(vr*196)} ft/min`);
+    const altStr=clicked.alt>0?`${clicked.alt.toLocaleString()} ft (${clicked.altM||Math.round(clicked.alt*.3048)}m)`:'On ground';
     tip.innerHTML=`
-      <div class="ft-callsign">✈ ${clicked.callsign}</div>
+      <div class="ft-callsign">✈ ${clicked.callsign}${liveBadge}</div>
       <div class="ft-row"><span class="ft-lbl">Airline</span><span class="ft-val">${clicked.airline}</span></div>
-      <div class="ft-row"><span class="ft-lbl">Aircraft</span><span class="ft-val">${clicked.aircraft}</span></div>
+      <div class="ft-row"><span class="ft-lbl">Country</span><span class="ft-val">${clicked.country||'—'}</span></div>
+      ${clicked.icao24&&clicked.icao24!=='??????'?`<div class="ft-row"><span class="ft-lbl">ICAO24</span><span class="ft-val" style="font-family:var(--mono);letter-spacing:.06em">${clicked.icao24.toUpperCase()}</span></div>`:''}
       <div class="ft-row"><span class="ft-lbl">From</span><span class="ft-val">${clicked.dep} — ${clicked.depCity}</span></div>
       <div class="ft-row"><span class="ft-lbl">To</span><span class="ft-val">${clicked.arr} — ${clicked.arrCity}</span></div>
-      <div class="ft-row"><span class="ft-lbl">Altitude</span><span class="ft-val">${clicked.alt.toLocaleString()} ft</span></div>
-      <div class="ft-row"><span class="ft-lbl">Speed</span><span class="ft-val">${Math.round(clicked.speed)} km/h</span></div>
+      <div class="ft-row"><span class="ft-lbl">Altitude</span><span class="ft-val">${altStr}</span></div>
+      <div class="ft-row"><span class="ft-lbl">Vertical</span><span class="ft-val">${vrStr}</span></div>
+      <div class="ft-row"><span class="ft-lbl">Ground speed</span><span class="ft-val">${Math.round(clicked.speed)} km/h (${Math.round(clicked.speed*.539957)} kt)</span></div>
       <div class="ft-row"><span class="ft-lbl">Heading</span><span class="ft-val">${Math.round(clicked.heading)}° ${d2c(clicked.heading)}</span></div>
+      ${clicked.squawk&&clicked.squawk!=='????'?`<div class="ft-row"><span class="ft-lbl">Squawk</span><span class="ft-val" style="font-family:var(--mono)">${clicked.squawk}</span></div>`:''}
+      <div style="margin-top:8px;font-size:.65rem;color:rgba(255,255,255,.25);text-align:right">${clicked.live?'Source: OpenSky Network':'Simulated flight'}</div>
     `;
   } else {
     tip.style.display='none';
@@ -1170,14 +1338,16 @@ async function render(lat,lon,name,data){
   buildHourlyStrip(data.hourly);
   buildHourlyChart(data.hourly);
   buildPresChart(pres);
-  // Radar
-  document.getElementById('radar-loc-badge').textContent='Location: '+name.split(',')[0];
-  generateFlights(lat,lon);
-  if(flightAnimId)cancelAnimationFrame(flightAnimId);
-  setTimeout(()=>{resizeRadar();animateFlights()},100);
   document.getElementById('upd-time').textContent='Updated '+locationTimeStr(locationTimezone);
   document.getElementById('loading').style.display='none';
   document.getElementById('dashboard').style.display='block';
+  // Radar — MUST init after dashboard is visible so canvas has real dimensions
+  document.getElementById('radar-loc-badge').textContent='Location: '+name.split(',')[0];
+  if(flightAnimId)cancelAnimationFrame(flightAnimId);
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    resizeRadar();
+    fetchLiveFlights(lat,lon);
+  }));
 }
 
 // ════════════════════════════════════════════
@@ -1238,8 +1408,12 @@ function useLocation(){
   },()=>{document.getElementById('load-msg').textContent='Location access denied.'});
 }
 
-// Resize radar on window resize
-window.addEventListener('resize',()=>{if(document.getElementById('dashboard').style.display!=='none')resizeRadar()});
+// Resize radar grid on window resize (don't re-fetch flights)
+window.addEventListener('resize',()=>{
+  if(document.getElementById('dashboard').style.display!=='none'){
+    resizeRadar();
+  }
+});
 
 // Init
 fetchWeather();
