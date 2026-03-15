@@ -372,103 +372,143 @@ footer a:hover{color:#60a5fa}
 </div>
 
 <!-- Main grid -->
-<div class="main-grid fa" style="animation-delay:.2s">
-  <div style="display:flex;flex-direction:column;gap:14px">
-    <!-- Chart -->
-    <div class="glass" style="padding:18px;border-radius:16px">
-      <div class="panel-hdr">Temperature · Precipitation · Humidity <span class="badge-sm">24h</span></div>
-      <div class="chart-wrap"><canvas id="hourly-chart"></canvas></div>
-      <div style="display:flex;gap:14px;font-size:.69rem;color:var(--text3);margin-top:10px">
-        <span style="display:flex;align-items:center;gap:5px"><span style="width:14px;height:2px;background:#60a5fa;display:inline-block;border-radius:2px"></span>Temp °C</span>
-        <span style="display:flex;align-items:center;gap:5px"><span style="width:10px;height:10px;border-radius:2px;background:rgba(96,165,250,.25);display:inline-block"></span>Precip mm</span>
-        <span style="display:flex;align-items:center;gap:5px"><span style="width:14px;height:2px;background:rgba(167,139,250,.55);display:inline-block;border-radius:2px"></span>Humidity /10</span>
-      </div>
-    </div>
-    <!-- METAR -->
-    <div class="glass" style="padding:18px;border-radius:16px">
-      <div class="panel-hdr">METAR <span class="badge-sm">hover tokens to decode</span></div>
-      <div class="metar-raw" id="metar-display"></div>
-      <div class="metar-tip" id="metar-tip">Hover a token to decode</div>
-    </div>
+<!-- Row 1: Full-width 24h chart -->
+<div class="glass fa" style="padding:20px;border-radius:16px;margin-bottom:14px;animation-delay:.2s">
+  <div class="panel-hdr">Temperature · Precipitation · Humidity <span class="badge-sm">24h trend</span></div>
+  <div style="position:relative;height:200px"><canvas id="hourly-chart"></canvas></div>
+  <div style="display:flex;gap:16px;font-size:.69rem;color:rgba(255,255,255,.35);margin-top:10px">
+    <span style="display:flex;align-items:center;gap:5px"><span style="width:14px;height:2px;background:#60a5fa;display:inline-block;border-radius:2px"></span>Temp °C</span>
+    <span style="display:flex;align-items:center;gap:5px"><span style="width:10px;height:10px;border-radius:2px;background:rgba(96,165,250,.25);display:inline-block"></span>Precip mm</span>
+    <span style="display:flex;align-items:center;gap:5px"><span style="width:14px;height:2px;background:rgba(167,139,250,.55);display:inline-block;border-radius:2px"></span>Humidity /10</span>
   </div>
+</div>
 
-  <!-- Right col -->
-  <div style="display:flex;flex-direction:column;gap:14px">
-    <!-- Wind compass -->
-    <div class="glass" style="padding:18px;border-radius:16px">
-      <div class="panel-hdr">Wind</div>
-      <div class="compass-outer">
-        <div class="c-ring-outer"></div><div class="c-ring-inner"></div>
-        <svg id="compass-svg" viewBox="0 0 130 130">
-          <circle cx="65" cy="65" r="62" fill="none" stroke="rgba(255,255,255,.08)" stroke-width=".5"/>
-          <circle cx="65" cy="65" r="44" fill="none" stroke="rgba(96,165,250,.15)" stroke-width=".5" stroke-dasharray="3 6"/>
-          <text x="65" y="11" text-anchor="middle" font-size="9" fill="rgba(255,255,255,.3)" font-family="DM Mono,monospace">N</text>
-          <text x="65" y="126" text-anchor="middle" font-size="9" fill="rgba(255,255,255,.3)" font-family="DM Mono,monospace">S</text>
-          <text x="7" y="69" text-anchor="middle" font-size="9" fill="rgba(255,255,255,.3)" font-family="DM Mono,monospace">W</text>
-          <text x="123" y="69" text-anchor="middle" font-size="9" fill="rgba(255,255,255,.3)" font-family="DM Mono,monospace">E</text>
-          <text x="104" y="26" text-anchor="middle" font-size="7" fill="rgba(255,255,255,.18)" font-family="DM Mono,monospace">NE</text>
-          <text x="26" y="26" text-anchor="middle" font-size="7" fill="rgba(255,255,255,.18)" font-family="DM Mono,monospace">NW</text>
-          <text x="104" y="109" text-anchor="middle" font-size="7" fill="rgba(255,255,255,.18)" font-family="DM Mono,monospace">SE</text>
-          <text x="26" y="109" text-anchor="middle" font-size="7" fill="rgba(255,255,255,.18)" font-family="DM Mono,monospace">SW</text>
-          <line x1="65" y1="4" x2="65" y2="14" stroke="rgba(255,255,255,.2)" stroke-width=".8"/>
-          <line x1="65" y1="116" x2="65" y2="126" stroke="rgba(255,255,255,.2)" stroke-width=".8"/>
-          <line x1="4" y1="65" x2="14" y2="65" stroke="rgba(255,255,255,.2)" stroke-width=".8"/>
-          <line x1="116" y1="65" x2="126" y2="65" stroke="rgba(255,255,255,.2)" stroke-width=".8"/>
-          <line id="wind-tail" x1="65" y1="65" x2="65" y2="90" stroke="rgba(96,165,250,.3)" stroke-width="1.5" stroke-linecap="round"/>
-          <line id="wind-needle" x1="65" y1="65" x2="65" y2="20" stroke="#60a5fa" stroke-width="2.5" stroke-linecap="round"/>
-          <circle cx="65" cy="65" r="5" fill="#60a5fa"/>
-          <circle cx="65" cy="65" r="2.5" fill="rgba(0,0,0,.5)"/>
-        </svg>
-      </div>
-      <div style="text-align:center;font-size:.78rem;color:var(--text2)" id="wind-label">—</div>
-      <div style="text-align:center;font-size:.68rem;color:var(--text3);margin-top:3px" id="wind-bf">—</div>
+<!-- Row 2: Wind compass + Flight category + METAR (3 col) -->
+<div class="triple-grid fa" style="animation-delay:.22s;margin-bottom:14px">
+  <!-- Wind compass -->
+  <div class="glass" style="padding:18px;border-radius:16px">
+    <div class="panel-hdr">Wind</div>
+    <div class="compass-outer">
+      <div class="c-ring-outer"></div><div class="c-ring-inner"></div>
+      <svg id="compass-svg" viewBox="0 0 130 130">
+        <circle cx="65" cy="65" r="62" fill="none" stroke="rgba(255,255,255,.08)" stroke-width=".5"/>
+        <circle cx="65" cy="65" r="44" fill="none" stroke="rgba(96,165,250,.15)" stroke-width=".5" stroke-dasharray="3 6"/>
+        <text x="65" y="11" text-anchor="middle" font-size="9" fill="rgba(255,255,255,.3)" font-family="DM Mono,monospace">N</text>
+        <text x="65" y="126" text-anchor="middle" font-size="9" fill="rgba(255,255,255,.3)" font-family="DM Mono,monospace">S</text>
+        <text x="7" y="69" text-anchor="middle" font-size="9" fill="rgba(255,255,255,.3)" font-family="DM Mono,monospace">W</text>
+        <text x="123" y="69" text-anchor="middle" font-size="9" fill="rgba(255,255,255,.3)" font-family="DM Mono,monospace">E</text>
+        <text x="104" y="26" text-anchor="middle" font-size="7" fill="rgba(255,255,255,.18)" font-family="DM Mono,monospace">NE</text>
+        <text x="26" y="26" text-anchor="middle" font-size="7" fill="rgba(255,255,255,.18)" font-family="DM Mono,monospace">NW</text>
+        <text x="104" y="109" text-anchor="middle" font-size="7" fill="rgba(255,255,255,.18)" font-family="DM Mono,monospace">SE</text>
+        <text x="26" y="109" text-anchor="middle" font-size="7" fill="rgba(255,255,255,.18)" font-family="DM Mono,monospace">SW</text>
+        <line x1="65" y1="4" x2="65" y2="14" stroke="rgba(255,255,255,.2)" stroke-width=".8"/>
+        <line x1="65" y1="116" x2="65" y2="126" stroke="rgba(255,255,255,.2)" stroke-width=".8"/>
+        <line x1="4" y1="65" x2="14" y2="65" stroke="rgba(255,255,255,.2)" stroke-width=".8"/>
+        <line x1="116" y1="65" x2="126" y2="65" stroke="rgba(255,255,255,.2)" stroke-width=".8"/>
+        <line id="wind-tail" x1="65" y1="65" x2="65" y2="90" stroke="rgba(96,165,250,.3)" stroke-width="1.5" stroke-linecap="round"/>
+        <line id="wind-needle" x1="65" y1="65" x2="65" y2="20" stroke="#60a5fa" stroke-width="2.5" stroke-linecap="round"/>
+        <circle cx="65" cy="65" r="5" fill="#60a5fa"/>
+        <circle cx="65" cy="65" r="2.5" fill="rgba(0,0,0,.5)"/>
+      </svg>
     </div>
-    <!-- Flight cat -->
-    <div class="glass" style="padding:18px;border-radius:16px">
-      <div class="panel-hdr">Flight category</div>
-      <div style="display:flex;align-items:center;margin-bottom:6px">
-        <span class="fc-dot fc-dot-g" id="fc-dot"></span>
-        <span class="fc-val" id="fc-main">—</span>
-      </div>
-      <div style="font-size:.77rem;color:var(--text2);margin-bottom:14px" id="fc-desc">—</div>
-      <div class="drow"><span class="dlbl">Ceiling AGL</span><span class="dval" id="fc-ceil">—</span></div>
-      <div class="drow"><span class="dlbl">Visibility</span><span class="dval" id="fc-vis">—</span></div>
-      <div class="drow"><span class="dlbl">Surface wind</span><span class="dval" id="fc-wnd">—</span></div>
-      <div class="drow"><span class="dlbl">Present wx</span><span class="dval" id="fc-wx">—</span></div>
+    <div style="text-align:center;font-size:.78rem;color:rgba(255,255,255,.7)" id="wind-label">—</div>
+    <div style="text-align:center;font-size:.68rem;color:rgba(255,255,255,.4);margin-top:3px" id="wind-bf">—</div>
+  </div>
+  <!-- Flight category -->
+  <div class="glass" style="padding:18px;border-radius:16px">
+    <div class="panel-hdr">Flight category</div>
+    <div style="display:flex;align-items:center;margin-bottom:6px">
+      <span class="fc-dot fc-dot-g" id="fc-dot"></span>
+      <span class="fc-val" id="fc-main">—</span>
     </div>
-    <!-- Aloft -->
-    <div class="glass" style="padding:18px;border-radius:16px">
-      <div class="panel-hdr">Winds aloft</div>
-      <table class="aloft-tbl"><thead><tr><th>Alt</th><th>Speed</th><th>Dir</th><th>°C</th><th>Turb</th></tr></thead><tbody id="aloft-body"></tbody></table>
-    </div>
+    <div style="font-size:.77rem;color:rgba(255,255,255,.7);margin-bottom:14px" id="fc-desc">—</div>
+    <div class="drow"><span class="dlbl">Ceiling AGL</span><span class="dval" id="fc-ceil">—</span></div>
+    <div class="drow"><span class="dlbl">Visibility</span><span class="dval" id="fc-vis">—</span></div>
+    <div class="drow"><span class="dlbl">Surface wind</span><span class="dval" id="fc-wnd">—</span></div>
+    <div class="drow"><span class="dlbl">Present wx</span><span class="dval" id="fc-wx">—</span></div>
+  </div>
+  <!-- METAR -->
+  <div class="glass" style="padding:18px;border-radius:16px">
+    <div class="panel-hdr">METAR <span class="badge-sm">hover to decode</span></div>
+    <div class="metar-raw" id="metar-display"></div>
+    <div class="metar-tip" id="metar-tip">Hover a token to decode</div>
+  </div>
+</div>
+
+<!-- Row 3: Winds aloft full width -->
+<div class="glass fa" style="padding:20px;border-radius:16px;margin-bottom:14px;animation-delay:.24s">
+  <div class="panel-hdr">Winds aloft</div>
+  <div style="overflow-x:auto">
+    <table class="aloft-tbl" style="min-width:500px"><thead><tr><th>Altitude</th><th>Speed</th><th>Direction</th><th>Temp °C</th><th>Turbulence</th></tr></thead><tbody id="aloft-body"></tbody></table>
   </div>
 </div>
 
 <!-- Bottom panels -->
-<div class="bottom-grid fa" style="animation-delay:.24s">
-  <div class="glass" style="padding:18px;border-radius:16px">
-    <div class="panel-hdr">UV index & solar</div>
-    <div class="gauge-wrap"><div class="g-track"></div><div class="g-fill" id="g-fill"></div><div class="g-needle" id="g-needle"></div></div>
-    <div class="g-val" id="uv-val">—</div><div class="g-sub" id="uv-sub">UV Index</div>
-    <div style="margin-top:16px"><div class="sun-wrap"><canvas id="sun-canvas"></canvas></div><div class="sun-times"><span id="sunrise">—</span><span id="sunset">—</span></div></div>
+<!-- Row: UV + Pressure + Air mass (4-up compact) -->
+<div class="stats-grid fa" style="animation-delay:.24s;grid-template-columns:repeat(4,1fr);margin-bottom:14px">
+  <div class="glass stat" style="border-radius:14px">
+    <div class="stat-lbl">UV index</div>
+    <div class="stat-val" id="uv-val">—</div>
+    <div class="stat-sub" id="uv-sub">—</div>
   </div>
-  <div class="glass" style="padding:18px;border-radius:16px">
-    <div class="panel-hdr">Pressure & tendency</div>
-    <div style="font-family:var(--display);font-size:2.2rem;font-weight:700;margin-bottom:2px;text-shadow:0 2px 15px rgba(0,0,0,.3)" id="pres-big">—</div>
-    <div style="font-size:.7rem;color:var(--text3);margin-bottom:14px">hPa (QNH)</div>
-    <div class="p-arrow" id="p-arrow"><span id="p-icon"></span><span id="p-lbl">—</span></div>
-    <div style="font-size:.72rem;color:var(--text3);margin-bottom:14px" id="p-desc">—</div>
-    <div style="position:relative;height:72px"><canvas id="pres-spark"></canvas></div>
-    <div style="font-size:.67rem;color:var(--text3);margin-top:5px">Simulated 6-hour trend</div>
+  <div class="glass stat" style="border-radius:14px">
+    <div class="stat-lbl">Pressure (QNH)</div>
+    <div class="stat-val" id="pres-big">—</div>
+    <div class="stat-sub" id="p-lbl">—</div>
   </div>
-  <div class="glass" style="padding:18px;border-radius:16px">
-    <div class="panel-hdr">Air mass analysis</div>
-    <div class="drow"><span class="dlbl">K-index</span><span class="dval" id="k-idx">—</span></div>
-    <div class="drow"><span class="dlbl">CAPE estimate</span><span class="dval" id="cape">—</span></div>
-    <div class="drow"><span class="dlbl">Mixing height</span><span class="dval" id="mix-h">—</span></div>
-    <div class="drow"><span class="dlbl">Density altitude</span><span class="dval" id="den-alt">—</span></div>
-    <div class="drow"><span class="dlbl">Wet-bulb temp</span><span class="dval" id="wet-b">—</span></div>
-    <div class="drow"><span class="dlbl">Tropopause est.</span><span class="dval" id="tropo">—</span></div>
+  <div class="glass stat" style="border-radius:14px">
+    <div class="stat-lbl">Density altitude</div>
+    <div class="stat-val" id="den-alt">—</div>
+    <div class="stat-sub">ft MSL</div>
+  </div>
+  <div class="glass stat" style="border-radius:14px">
+    <div class="stat-lbl">Wet-bulb temp</div>
+    <div class="stat-val" id="wet-b">—</div>
+    <div class="stat-sub">°C</div>
+  </div>
+</div>
+
+<!-- Row: UV gauge + Solar arc + Pressure sparkline + Air mass (2+2 grid) -->
+<div class="wide-grid fa" style="animation-delay:.25s;margin-bottom:14px">
+  <!-- UV & Solar -->
+  <div class="glass" style="padding:20px;border-radius:16px">
+    <div class="panel-hdr">UV index & solar arc</div>
+    <div style="display:flex;gap:24px;align-items:center">
+      <div style="flex:0 0 auto;text-align:center">
+        <div class="gauge-wrap"><div class="g-track"></div><div class="g-fill" id="g-fill"></div><div class="g-needle" id="g-needle"></div></div>
+        <div class="g-val" id="uv-big">—</div>
+        <div class="g-sub" id="uv-sub2">UV Index</div>
+      </div>
+      <div style="flex:1">
+        <div class="sun-wrap" style="height:66px"><canvas id="sun-canvas"></canvas></div>
+        <div class="sun-times"><span id="sunrise">—</span><span id="sunset">—</span></div>
+        <div style="margin-top:12px">
+          <div class="drow"><span class="dlbl">Sunrise</span><span class="dval" id="sunrise2">—</span></div>
+          <div class="drow"><span class="dlbl">Sunset</span><span class="dval" id="sunset2">—</span></div>
+          <div class="drow"><span class="dlbl">Daylight</span><span class="dval" id="daylight-hrs2">—</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Pressure + Air mass side by side -->
+  <div class="glass" style="padding:20px;border-radius:16px">
+    <div class="panel-hdr">Pressure & air mass</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+      <div>
+        <div style="font-family:var(--display);font-size:2rem;font-weight:700;margin-bottom:2px" id="pres-big2">—</div>
+        <div style="font-size:.7rem;color:rgba(255,255,255,.35);margin-bottom:10px">hPa (QNH)</div>
+        <div class="p-arrow" id="p-arrow"><span id="p-icon"></span> <span id="p-lbl2">—</span></div>
+        <div style="font-size:.7rem;color:rgba(255,255,255,.35);margin-bottom:10px" id="p-desc">—</div>
+        <div style="position:relative;height:64px"><canvas id="pres-spark"></canvas></div>
+      </div>
+      <div>
+        <div class="drow"><span class="dlbl">K-index</span><span class="dval" id="k-idx">—</span></div>
+        <div class="drow"><span class="dlbl">CAPE</span><span class="dval" id="cape">—</span></div>
+        <div class="drow"><span class="dlbl">Mix height</span><span class="dval" id="mix-h">—</span></div>
+        <div class="drow"><span class="dlbl">Den. alt.</span><span class="dval" id="den-alt2">—</span></div>
+        <div class="drow"><span class="dlbl">Tropopause</span><span class="dval" id="tropo">—</span></div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -1088,9 +1128,12 @@ async function render(lat,lon,name,data){
   const ap=document.getElementById('alert-pill');
   if([82,95,96,99].includes(c.weather_code)){ap.style.display='inline-flex'}else ap.style.display='none';
   document.getElementById('pres-big').textContent=pres;
+  document.getElementById('pres-big2').textContent=pres;
   const pEl=document.getElementById('p-arrow');pEl.className='p-arrow '+(pres>1013?'p-up':pres<1000?'p-dn':'p-st');
   document.getElementById('p-icon').textContent=pres>1013?'▲':'▼';
-  document.getElementById('p-lbl').textContent=pres>1013?'Rising':'Falling';
+  const plbl=pres>1013?'Rising':'Falling';
+  document.getElementById('p-lbl').textContent=plbl;
+  document.getElementById('p-lbl2').textContent=plbl;
   document.getElementById('p-desc').textContent=pres>1020?'High pressure — settled, dry conditions':pres>1013?'Slightly above avg — generally fair':pres>1000?'Near average — changeable':'Low pressure — unsettled, precipitation possible';
   const ki=kIndex(c.temperature_2m,c.relative_humidity_2m);
   document.getElementById('k-idx').textContent=`${ki} — ${ki<20?'Non-convective':ki<30?'Marginal':ki<40?'T-storm possible':'Severe storms'}`;
@@ -1098,14 +1141,23 @@ async function render(lat,lon,name,data){
   document.getElementById('cape').textContent=`~${cape} J/kg — ${cape<500?'Low':cape<1500?'Moderate':cape<2500?'High':'Extreme'}`;
   document.getElementById('mix-h').textContent=Math.round(1200+(c.temperature_2m-10)*55)+' ft AGL';
   document.getElementById('den-alt').textContent=densAlt(c.pressure_msl,c.temperature_2m).toLocaleString()+' ft';
+  document.getElementById('den-alt2').textContent=densAlt(c.pressure_msl,c.temperature_2m).toLocaleString()+' ft';
   document.getElementById('wet-b').textContent=wetBulb(c.temperature_2m,c.relative_humidity_2m)+'°C';
   document.getElementById('tropo').textContent=`~${Math.round(36090-Math.abs(lat)*200)} ft`;
   const uvIdx=data.hourly?.uv_index?.[Math.floor(locH)]||Math.round(Math.random()*5+1);
   buildUVGauge(uvIdx);
+  // Sync stat row values
+  const uvShort=['Low','Low','Mod','Mod','Mod','High','High','V.High','V.High','Extreme','Extreme','Extreme'];
+  document.getElementById('uv-val').textContent=uvIdx.toFixed(1);
+  document.getElementById('uv-sub').textContent=uvShort[Math.min(11,Math.floor(uvIdx))];
+  document.getElementById('uv-big').textContent=uvIdx.toFixed(1);
+  document.getElementById('uv-sub2').textContent='UV — '+['Low','Low','Moderate','Moderate','Moderate','High','High','Very high','Very high','Extreme','Extreme','Extreme'][Math.min(11,Math.floor(uvIdx))];
   const riseT=(data.daily?.sunrise?.[0]||'T06:00').split('T')[1]?.substring(0,5)||'06:00';
   const setT=(data.daily?.sunset?.[0]||'T20:00').split('T')[1]?.substring(0,5)||'20:00';
   document.getElementById('sunrise').textContent='↑ '+riseT;
   document.getElementById('sunset').textContent=setT+' ↓';
+  document.getElementById('sunrise2').textContent=riseT;
+  document.getElementById('sunset2').textContent=setT;
   setTimeout(()=>drawSunArc(riseT,setT),150);
   buildMETAR(name,c);
   buildAloft(c.temperature_2m,Math.round(c.wind_speed_10m*.539957),c.wind_direction_10m);
@@ -1394,6 +1446,8 @@ function buildAstronomy(riseStr,setStr){
   const twilight=timeAdd(set,24);
   const moonrise=timeAdd(rise,Math.round(Math.random()*240+120));
   document.getElementById('daylight-hrs').textContent=`${h}h ${m}m`;
+  const dlEl=document.getElementById('daylight-hrs2');
+  if(dlEl) dlEl.textContent=`${h}h ${m}m`;
   document.getElementById('solar-noon').textContent=noon;
   document.getElementById('golden-hour').textContent=golden+' — '+timeAdd(set,0);
   document.getElementById('civil-twilight').textContent=twilight;
